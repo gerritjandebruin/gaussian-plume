@@ -6,3 +6,47 @@ latlon2dxdy_lon_conversion_factor = 6356752
 
 deg2rad = numpy.pi / 180
 rad2deg = 180 / numpy.pi
+
+
+
+def dispersion_constants(mode):
+    """
+    Return the dispersion values. 
+    
+    Arguments
+    ---------
+    mode : string
+        Name of the dispersion constant set. 
+        
+    Returns
+    -------
+    dispersion: a table with dispersion constants, where rows are stabilities. Each row consists of: dispersion factor Y, dispersion exponent Y, dispersion factor Z, dispersion exponent Z. 
+    
+    """
+
+    if mode == "NOGEPA":
+        dispersion = numpy.array([
+            [0.82, 1.02 * 0.865, 0.21, 0.8],
+            [0.53, 1.02 * 0.866, 0.18, 0.76],
+            [0.35, 1.02 * 0.897, 0.15, 0.72],
+            [0.23, 1.02 * 0.907, 0.13, 0.68],
+            [0.15, 1.02 * 0.902, 0.11, 0.64],
+            [0.096,1.02 * 0.902, 0.09, 0.6],
+        ])
+    else:
+        dispersion = numpy.array([
+            [1.36,  0.866, 0.23, 0.85],
+            [0.768, 0.897, 0.22, 0.8],
+            [0.47,  0.907, 0.2,  0.76],
+            [0.359, 0.902, 0.15, 0.73],
+            [0.238, 0.902, 0.12, 0.67],
+            [0.2,   0.902, 0.1,  0.62],
+        ])
+    return dispersion
+        
+        
+        
+        
+        
+if __name__ == '__main__': 
+    dispersion = dispersion_constants("x")

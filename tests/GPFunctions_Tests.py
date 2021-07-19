@@ -223,14 +223,51 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         # print(dx, dy)
         self.assertTrue(numpy.allclose(dx_expected, dx))
         self.assertTrue(numpy.allclose(dy_expected, dy))
+
+
+class Test_calculate_sigma(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+
+    def test_1(self):
+
+        dx = 100
+        z0 = 50
+        Tc = 20
+        ca = 0.53
+        cb = -0.22
+        mode = "NOGEPA"
+        stability = 0
+        
+        sigma_y_expected = 297.55575321823056
+        sigma_z_expected = 27.643039073928154
+        
+        dispersion_constants = GPF.get_dispersion_constants(mode)
+        
+        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability)
+        
+        print(sigma_y, sigma_z)
+
+        self.assertTrue(numpy.allclose(sigma_y, sigma_y_expected))
+        self.assertTrue(numpy.allclose(sigma_z, sigma_z_expected))
+        
+
+
+
+
         
 if __name__ == '__main__': 
     verbosity = 1
     
-    if 1:
+    if 0:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)      
 
-    if 1:
+    if 0:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)              
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)    
+
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)            

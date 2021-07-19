@@ -92,7 +92,78 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction):
     return dx, dy
 
 
+def get_dispersion_constants(mode):
+    """
+    Select the right dispersion mode.
+    
+    Argument
+    --------
+    mode : string
+        The required mode.
+        
+    Returns
+    -------
+    dispersion_constants : ndarray
+        A table with constants. Rows are the stability classes, columns the factors. 
+    
+    """
+    return GPC.dispersion_constants(mode)
 
+
+def calculate_Tc(dx, wind_speed):   
+    """
+    Calculate the travel time in seconds(?)
+    
+    Arguments
+    ---------
+    dx : number
+        Distance between the source and the measurement in meters. 
+    wind_speed : number
+        Wind speed in km/h. 
+    
+    Returns
+    -------
+    travel_time : number
+        Travel time in seconds. 
+    
+    """
+    return dx / (3600 * wind_speed)
+
+
+def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
+    """
+    Calculate the plume width and height at dx. 
+    
+    
+    
+    Arguments
+    ---------
+    dx : number
+        Distance between the source and the measurement in meter
+    z0 : number
+        Source height in meter
+    Tc : number
+        Travel time between source and measurement in seconds
+    ca : number
+        Some exponent
+    cb : number
+        Some exponent
+    dispersion_constants : ndarray
+        Table with dispersion constants
+    stability : number
+        Index 0-5 for stability, where 0 is most stable.
+    
+    Returns
+    -------
+    sigma_y, sigma_z : number
+        Values for the disk diameter in y and z direction.
+    
+    """
+    
+    sigma_y = dispersion_constants[stability,0] * dx**dispersion_constants[stability,1] * z0**0.2 * Tc**0.35
+    sigma_z = dispersion_constants[stability,2] * dx**dispersion_constants[stability,3] * (10*z0)**(ca * dx**cb)
+    
+    return sigma_y, sigma_z
 
 
 
