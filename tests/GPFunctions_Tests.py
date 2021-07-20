@@ -253,10 +253,79 @@ class Test_calculate_sigma(unittest.TestCase):
         self.assertTrue(numpy.allclose(sigma_z, sigma_z_expected))
         
 
+class Test_calculate_concentration(unittest.TestCase):
 
+    def setUp(self):
+        self.verbose = 1
 
-
+    def test_1(self):
         
+        Qs = 1
+        wind_speed = 10
+        sigma_y = 200
+        sigma_z = 10
+        dy = 50 
+        Zr = 10
+        Hs = 5
+        Hm = 500
+        molecular_mass = 16
+        
+        GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+
+
+class Test_small_functions(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+        
+        
+    def test_calculate_Tc_1(self):
+        
+        tests = [
+            # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
+            {"dx": 100, "wind_speed": 10, "Tc_expected": 10, "description": "Basic case"},
+            # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
+            # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
+            # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
+            # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
+        ]
+
+        for test in tests:
+            with self.subTest(test["description"]):              
+        
+                Tc = GPF.calculate_Tc(test["dx"], test["wind_speed"])
+                print(Tc)
+                self.assertTrue(numpy.allclose(test["Tc_expected"], Tc))
+        
+    def test_get_molecule_properties(self):
+        
+        tests = [
+            # {"molecule": "", "name_expected": "", "description": ""},
+            {"molecule": "CH4", "name_expected": "methane", "description": ""},
+            {"molecule": "ch4", "name_expected": "methane", "description": ""},
+            {"molecule": "Ch4", "name_expected": "methane", "description": ""},
+            {"molecule": "cH4", "name_expected": "methane", "description": ""},
+            {"molecule": "MeThAnE", "name_expected": "methane", "description": ""},
+            # {"molecule": "", "name_expected": "", "description": ""},
+            # {"molecule": "", "name_expected": "", "description": ""},
+            # {"molecule": "", "name_expected": "", "description": ""},
+        
+        ]
+        for test in tests:
+            with self.subTest(test["description"]): 
+                res = GPF.get_molecule_properties(test["molecule"])
+                self.assertTrue(res["name"] == test["name_expected"])
+
+    def test_get_molecule_properties_wrong_name(self):
+ 
+        res = GPF.get_molecule_properties("fiets")
+        self.assertTrue(res is None) 
+
+
+
+
+
+     
 if __name__ == '__main__': 
     verbosity = 1
     
