@@ -119,7 +119,7 @@ def calculate_Tc(dx, wind_speed):
     dx : number
         Distance between the source and the measurement in meters. 
     wind_speed : number
-        Wind speed in km/h. 
+        Wind speed in m/s
     
     Returns
     -------
