@@ -337,6 +337,14 @@ if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)    
 
-    if 1:
+    if 0:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)            
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)        
+
+    if 0:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)          
