@@ -188,6 +188,46 @@ def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
 
 
 
+def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass):
+    """
+    Calculate the concentration
+    
+    
+    Arguments
+    ---------
+    Qs : number
+        Source strength in gram / second
+    wind_speed : number
+        Wind speed in m/s.
+    sigma_y : number
+        Plume width in m. 
+    sigma_z : number
+        Plume height in m. 
+    dy : number
+        Distance perpendicular. 
+    Zr : number
+        Height of the measurement in m. 
+    Hs : number
+        Height of the source in m. 
+    Hm : number
+        Height of the mixing layer in m. 
+    molecular_mass : number
+        Molecular mass in g/mol. 
+        
+    """
+
+    A = Qs / (2 * numpy.pi * wind_speed * sigma_y * sigma_z)
+    B = numpy.exp(-dy**2 / (2 * sigma_y**2))
+    C = 2 * sigma_z**2
+    D = numpy.exp(-(Zr - Hs)**2 / C)
+    E = numpy.exp(-(Zr + Hs)**2 / C)
+    F = numpy.exp(-(Zr - (2 * Hm - Hs))**2 / C)    
+    
+    return GPC.liter_per_mole_air * 1e6 * A * B * (D + E + F) / molecular_mass
+
+
+
+
 
 
 
