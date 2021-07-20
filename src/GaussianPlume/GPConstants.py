@@ -7,7 +7,7 @@ latlon2dxdy_lon_conversion_factor = 6356752
 deg2rad = numpy.pi / 180
 rad2deg = 180 / numpy.pi
 
-
+liter_per_mole_air = 22.36
 
 def dispersion_constants(mode):
     """
@@ -43,6 +43,44 @@ def dispersion_constants(mode):
             [0.2,   0.902, 0.1,  0.62],
         ])
     return dispersion
+        
+def molecule_properties(molecule):
+    """
+    
+    Arguments
+    ---------
+    molecule : string
+        Name of the molecule
+        
+    Returns
+    -------
+    molecule_properties : dict
+        A dictionary with molecule properties. 
+    
+    """
+    molecule = molecule.lower()
+
+    if molecule in ["methane", "ch4"]:
+        return {
+            "formula": "CH4",
+            "name": "methane",
+            "molecular_mass": 16,
+        }
+    elif molecule in ["n2o", "nitrous oxide"]:
+        return {
+            "formula": "N2O",
+            "name": "nitrous axide",
+            "molecular_mass": 44,
+        }        
+    elif molecule in ["c2h6", "ethane"]:
+        return {
+            "formula": "C2H6",
+            "name": "ethane",
+            "molecular_mass": 30,
+        }  
+    else:
+        print("Molecule is not implemented")
+        return None
         
         
         
