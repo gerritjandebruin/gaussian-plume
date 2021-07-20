@@ -146,7 +146,7 @@ def calculate_Tc(dx, wind_speed):
         Travel time in seconds. 
     
     """
-    return dx / (3600 * wind_speed)
+    return dx / (wind_speed)
 
 
 def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
