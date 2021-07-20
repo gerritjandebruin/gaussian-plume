@@ -110,6 +110,25 @@ def get_dispersion_constants(mode):
     return GPC.dispersion_constants(mode)
 
 
+def get_molecule_properties(molecule):
+    """
+
+    Get a dictionary with molecule properties. 
+    
+    Argument
+    --------
+    molecule : string
+        Name of the molecule. 
+        
+    Returns
+    -------
+    molecule_properties : dict
+        Dictionary with molecule properties
+    
+    """
+    return GPC.molecule_properties(molecule)
+
+
 def calculate_Tc(dx, wind_speed):   
     """
     Calculate the travel time in seconds(?)
