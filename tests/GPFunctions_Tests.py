@@ -283,7 +283,7 @@ class Test_small_functions(unittest.TestCase):
         
         tests = [
             # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
-            {"dx": 100, "wind_speed": 10, "Tc_expected": 10, "description": "Basic case"},
+            {"dx": 100, "wind_speed": 10, "Tc_expected": 0.0027778, "description": "Basic case"},
             # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
             # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
             # {"dx": , "wind_speed": , "Tc_expected": , "description": ""},
@@ -294,8 +294,14 @@ class Test_small_functions(unittest.TestCase):
             with self.subTest(test["description"]):              
         
                 Tc = GPF.calculate_Tc(test["dx"], test["wind_speed"])
-                print(Tc)
+                # print(Tc)
                 self.assertTrue(numpy.allclose(test["Tc_expected"], Tc))
+
+
+class Test_get_molecule_properties(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
         
     def test_get_molecule_properties(self):
         

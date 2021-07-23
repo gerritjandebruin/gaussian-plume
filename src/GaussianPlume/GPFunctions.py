@@ -132,6 +132,7 @@ def get_molecule_properties(molecule):
 def calculate_Tc(dx, wind_speed):   
     """
     Calculate the travel time in seconds(?)
+    TODO: is this correct?
     
     Arguments
     ---------
@@ -146,7 +147,7 @@ def calculate_Tc(dx, wind_speed):
         Travel time in seconds. 
     
     """
-    return dx / (wind_speed)
+    return dx / (3600 * wind_speed)
 
 
 def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
