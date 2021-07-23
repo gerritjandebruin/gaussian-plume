@@ -1,6 +1,7 @@
 import importlib 
 import numpy
 import unittest
+import warnings
 
 import GPFunctions as GPF
 import GPConstants as GPC
@@ -261,17 +262,50 @@ class Test_calculate_concentration(unittest.TestCase):
     def test_1(self):
         
         Qs = 1
-        wind_speed = 10
+        wind_speed = 1
         sigma_y = 200
         sigma_z = 10
         dy = 50 
-        Zr = 10
+        Zr = 5
         Hs = 5
         Hm = 500
         molecular_mass = 16
         
-        GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+        print(c)
 
+
+    def test_function_parts(self):
+        
+        Qs = 1
+        wind_speed = 1
+        sigma_y = 1
+        sigma_z = 1
+        dy = 0 
+        Zr = 5
+        Hs = 5
+        Hm = 500
+        molecular_mass = 16
+        
+        A = Qs / (2 * numpy.pi * wind_speed * sigma_y * sigma_z)
+        B = numpy.exp(-dy**2 / (2 * sigma_y**2))
+        C = 2 * sigma_z**2
+        D = numpy.exp(-(Zr - Hs)**2 / C)
+        E = numpy.exp(-(Zr + Hs)**2 / C)
+        F = numpy.exp(-(Zr - (2 * Hm - Hs))**2 / C)    
+        
+        print("A: {:15.14f}".format(A))
+        print("B: {:f}".format(B))
+        print("C: {:f}".format(C))
+        print("D: {:f}".format(D))
+        print("E: {:f}".format(E))
+        print("F: {:15.14f}".format(F))
+        
+        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+        print(c)
+
+
+        
 
 class Test_small_functions(unittest.TestCase):
 
@@ -323,12 +357,25 @@ class Test_get_molecule_properties(unittest.TestCase):
                 self.assertTrue(res["name"] == test["name_expected"])
 
     def test_get_molecule_properties_wrong_name(self):
- 
-        res = GPF.get_molecule_properties("fiets")
-        self.assertTrue(res is None) 
+        
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            res = GPF.get_molecule_properties("fiets")
+            self.assertTrue(res is None) 
+            assert "Molecule is not implemented" in str(w[-1].message)
+            # print(w[-1].message)
 
+class Test_get_dispersion_constants(unittest.TestCase):
 
+    def setUp(self):
+        self.verbose = 1
 
+    def test_basic(self):
+        dc = GPF.get_dispersion_constants(mode = "NOGEPA")
+        self.assertTrue(dc[0][0] == 1.36)
+        self.assertTrue(len(dc) == 6)
+        self.assertTrue(len(dc[0]) == 4)
+        
 
 
      
@@ -347,10 +394,22 @@ if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)        
 
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
+    if 0:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+
+    if 0:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+        
+    if 0:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)          
+        
+
+
+        
