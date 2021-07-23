@@ -1,4 +1,4 @@
-
+import warnings 
 import numpy
 
 latlon2dxdy_lat_conversion_factor = 6378137
@@ -24,7 +24,7 @@ def dispersion_constants(mode):
     
     """
 
-    if mode == "NOGEPA":
+    if mode.lower() == "farm":
         dispersion = numpy.array([
             [0.82, 1.02 * 0.865, 0.21, 0.8],
             [0.53, 1.02 * 0.866, 0.18, 0.76],
@@ -33,7 +33,7 @@ def dispersion_constants(mode):
             [0.15, 1.02 * 0.902, 0.11, 0.64],
             [0.096,1.02 * 0.902, 0.09, 0.6],
         ])
-    else:
+    elif mode.lower() in ["nogepa", "sea"]:
         dispersion = numpy.array([
             [1.36,  0.866, 0.23, 0.85],
             [0.768, 0.897, 0.22, 0.8],
@@ -79,7 +79,7 @@ def molecule_properties(molecule):
             "molecular_mass": 30,
         }  
     else:
-        print("Molecule is not implemented")
+        warnings.warn("Molecule is not implemented")
         return None
         
         
