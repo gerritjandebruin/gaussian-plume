@@ -10,7 +10,10 @@ Welcome to GaussianPlume's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-Convention: x is wind direction, y is horizontal perpendicular, z is vertical
+	GPFunctions
+	GPImportMeasurementParameters
+	GPConstants
+
 
 
 Indices and tables
