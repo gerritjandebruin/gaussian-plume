@@ -59,6 +59,8 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction):
     """
     Calculate dx and dy.     
     
+    Arguments
+    ---------
     dlatS : number, ndarray, list
         North-south distance between source and reference, where positive means the source is north of the reference
     dlonS : number, ndarray, list
@@ -96,8 +98,8 @@ def get_dispersion_constants(mode):
     """
     Select the right dispersion mode.
     
-    Argument
-    --------
+    Arguments
+    ---------
     mode : string
         The required mode.
         
@@ -115,8 +117,8 @@ def get_molecule_properties(molecule):
 
     Get a dictionary with molecule properties. 
     
-    Argument
-    --------
+    Arguments
+    ---------
     molecule : string
         Name of the molecule. 
         
