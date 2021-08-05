@@ -1,7 +1,7 @@
-GPFunctions module
+GPPlume module
 ==================
 
-.. automodule:: GPFunctions
+.. automodule:: GPPlume
    :members:
    :undoc-members:
    :show-inheritance:

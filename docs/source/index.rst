@@ -10,6 +10,8 @@ Welcome to GaussianPlume's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+	GPPlume
+	GPPlumes
 	GPFunctions
 	GPImportData
 	GPConstants
