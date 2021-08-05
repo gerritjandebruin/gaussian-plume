@@ -7,7 +7,7 @@ import GPConstants as GPC
 
 importlib.reload(GPC)
 
-def latlon2dlatdlon(lat, lon, latR, lonR):
+def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0):
     """
     Calculate the distance in meter in north-south and east-west direction for two coordinates. 
     
@@ -37,6 +37,13 @@ def latlon2dlatdlon(lat, lon, latR, lonR):
     
     
     """
+    if verbose > 1:
+        print("GPFunctions.latlon2dlatdlon()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))
+        
+    
     if type(lat) == list:
         lat = numpy.array(lat)
     if type(lon) == list:
@@ -55,7 +62,7 @@ def latlon2dlatdlon(lat, lon, latR, lonR):
 
 
 
-def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction):
+def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = 0):
     """
     Calculate dx and dy.     
     
@@ -74,6 +81,13 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction):
     
     
     """
+
+    if verbose > 1:
+        print("GPFunctions.dlatdlon2dxdy()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))
+    
     if type(dlatS) == list:
         dlatS = numpy.array(dlatS)
     if type(dlonS) == list:
@@ -85,16 +99,13 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction):
     if type(wind_direction) == list:
         wind_direction = numpy.array(wind_direction)
 
- 
-    
-    
     dx = (dlatS - dlatM) * numpy.cos(wind_direction * GPC.deg2rad) + (dlonS - dlonM) * numpy.sin(wind_direction * GPC.deg2rad)
     dy = (dlatS - dlatM) * numpy.sin(wind_direction * GPC.deg2rad) - (dlonS - dlonM) * numpy.cos(wind_direction * GPC.deg2rad)
     
     return dx, dy
 
 
-def get_dispersion_constants(mode):
+def get_dispersion_constants(mode, verbose = 0):
     """
     Select the right dispersion mode.
     
@@ -109,10 +120,16 @@ def get_dispersion_constants(mode):
         A table with constants. Rows are the stability classes, columns the factors. 
     
     """
+    if verbose > 1:
+        print("GPFunctions.get_dispersion_constants()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))  
+    
     return GPC.dispersion_constants(mode)
 
 
-def get_molecule_properties(molecule):
+def get_molecule_properties(molecule, verbose = 0):
     """
 
     Get a dictionary with molecule properties. 
@@ -128,10 +145,16 @@ def get_molecule_properties(molecule):
         Dictionary with molecule properties
     
     """
+    if verbose > 1:
+        print("GPFunctions.get_molecule_properties()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))  
+    
     return GPC.molecule_properties(molecule)
 
 
-def calculate_Tc(dx, wind_speed):   
+def calculate_Tc(dx, wind_speed, verbose = 0):   
     """
     Calculate the travel time in seconds(?)
     TODO: is this correct?
@@ -149,10 +172,16 @@ def calculate_Tc(dx, wind_speed):
         Travel time in seconds. 
     
     """
+    if verbose > 1:
+        print("GPFunctions.calculate_Tc()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1])) 
+    
     return dx / (3600 * wind_speed)
 
 
-def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
+def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability, verbose = 0):
     """
     Calculate the plume width and height at dx. 
     
@@ -181,6 +210,11 @@ def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
         Values for the disk diameter in y and z direction.
     
     """
+    if verbose > 1:
+        print("GPFunctions.calculate_sigma()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))
     
     sigma_y = dispersion_constants[stability,0] * dx**dispersion_constants[stability,1] * z0**0.2 * Tc**0.35
     sigma_z = dispersion_constants[stability,2] * dx**dispersion_constants[stability,3] * (10*z0)**(ca * dx**cb)
@@ -191,7 +225,7 @@ def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability):
 
 
 
-def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass):
+def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass, verbose = 0):
     """
     Calculate the concentration
     
@@ -218,7 +252,12 @@ def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, mo
         Molecular mass in g/mol. 
         
     """
-
+    if verbose > 1:
+        print("GPFunctions.calculate_concentration()")
+    if verbose > 2:
+        for item in vars().items():
+            print("    {:}: {:}".format(item[0], item[1]))
+        
     A = Qs / (2 * numpy.pi * wind_speed * sigma_y * sigma_z)
     B = numpy.exp(-dy**2 / (2 * sigma_y**2))
     C = 2 * sigma_z**2

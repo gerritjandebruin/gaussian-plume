@@ -41,7 +41,7 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         for test in tests:
             with self.subTest(test["description"]):   
         
-                dlat, dlon = GPF.latlon2dlatdlon(lat = test["lat"], lon = test["lon"], latR = test["latR"], lonR = test["lonR"])
+                dlat, dlon = GPF.latlon2dlatdlon(lat = test["lat"], lon = test["lon"], latR = test["latR"], lonR = test["lonR"], verbose = self.verbose)
             # print(dlat, dlon)
             self.assertTrue(numpy.allclose(dlat, test["dlat"]))
             self.assertTrue(numpy.allclose(dlon, test["dlon"]))
@@ -60,7 +60,7 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         dlat_expected = numpy.array([221847,0,221847,0])
         dlon_expected = numpy.array([0,137042,0,137042])
 
-        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR)
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose)
 
         self.assertTrue(numpy.allclose(dlat, dlat_expected))
         self.assertTrue(numpy.allclose(dlon, dlon_expected))
@@ -80,7 +80,7 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         dlat_expected = numpy.array([110940.61952501, 122033.38036911, 133125.76947837, 144217.75306344] )
         dlon_expected = numpy.array([-10280.25654684, -3419.09534988, 3411.42462282, 10211.22014353])
 
-        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR)
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose)
 
         self.assertTrue(numpy.allclose(dlat, dlat_expected))
         self.assertTrue(numpy.allclose(dlon, dlon_expected))
@@ -102,7 +102,7 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         # dlon_expected = numpy.array([10280.25654684, 3419.09534988, -3411.42462282, -10211.22014353])
         dlon_expected = numpy.array([10508.33181779, 3502.78082929, -3502.78082929, -10508.33181779])
         
-        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR)
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose)
         # print(dlat, dlon)
         self.assertTrue(numpy.allclose(dlat, dlat_expected))
         self.assertTrue(numpy.allclose(dlon, dlon_expected))
@@ -120,7 +120,7 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         dlat_expected = numpy.array([221847,0,221847,0])
         dlon_expected = numpy.array([0,137042,0,137042])
 
-        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR)
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose)
 
         self.assertTrue(numpy.allclose(dlat, dlat_expected))
         self.assertTrue(numpy.allclose(dlon, dlon_expected))
@@ -152,7 +152,7 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         
         for test in tests:
             with self.subTest(test["description"]):        
-                dx, dy = GPF.dlatdlon2dxdy(dlatS = test["dlatS"], dlonS = test["dlonS"], dlatM  = test["dlatM"], dlonM = test["dlonM"], wind_direction = test["wind_direction"])
+                dx, dy = GPF.dlatdlon2dxdy(dlatS = test["dlatS"], dlonS = test["dlonS"], dlatM  = test["dlatM"], dlonM = test["dlonM"], wind_direction = test["wind_direction"], verbose = self.verbose)
                 # print(dx, dy)
                 self.assertTrue(numpy.allclose(test["dx"], dx))
                 self.assertTrue(numpy.allclose(test["dy"], dy))
@@ -168,7 +168,7 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         dx_expected = numpy.array([-100,100,100,100, 100, numpy.sqrt(20000),0])
         dy_expected = numpy.array([0,0,0,0, 0,0,100])
     
-        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction)
+        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = self.verbose)
 
         self.assertTrue(numpy.allclose(dx_expected, dx))
         self.assertTrue(numpy.allclose(dy_expected, dy))
@@ -187,7 +187,7 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         dx_expected = numpy.array([-100,100,100,100, 100, numpy.sqrt(20000),0])
         dy_expected = numpy.array([0,0,0,0, 0,0,100])
     
-        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction)
+        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = self.verbose)
 
         self.assertTrue(numpy.allclose(dx_expected, dx))
         self.assertTrue(numpy.allclose(dy_expected, dy))
@@ -203,7 +203,7 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         dx_expected = numpy.array([-250, -175, -200, -175, -100])
         dy_expected = numpy.array([90, 80, 70, 60, 50])
     
-        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction)
+        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = self.verbose)
         
         self.assertTrue(numpy.allclose(dx_expected, dx))
         self.assertTrue(numpy.allclose(dy_expected, dy))
@@ -220,7 +220,7 @@ class Test_dlatdlon2dxdy(unittest.TestCase):
         dx_expected = numpy.array([250, 175, 200, 175, 100])
         dy_expected = numpy.array([-90, -80, -70, -60, -50])
     
-        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction)
+        dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = self.verbose)
         # print(dx, dy)
         self.assertTrue(numpy.allclose(dx_expected, dx))
         self.assertTrue(numpy.allclose(dy_expected, dy))
@@ -241,12 +241,12 @@ class Test_calculate_sigma(unittest.TestCase):
         mode = "NOGEPA"
         stability = 0
         
-        sigma_y_expected = 297.55575321823056
-        sigma_z_expected = 27.643039073928154
+        sigma_y_expected = 457.8185733798507 #297.55575321823056
+        sigma_z_expected = 38.11486000170984 #27.643039073928154
         
-        dispersion_constants = GPF.get_dispersion_constants(mode)
+        dispersion_constants = GPF.get_dispersion_constants(mode, verbose = self.verbose)
         
-        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability)
+        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability, verbose = self.verbose)
         
         print(sigma_y, sigma_z)
 
@@ -271,7 +271,7 @@ class Test_calculate_concentration(unittest.TestCase):
         Hm = 500
         molecular_mass = 16
         
-        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass, verbose = self.verbose)
         print(c)
 
 
@@ -301,7 +301,7 @@ class Test_calculate_concentration(unittest.TestCase):
         print("E: {:f}".format(E))
         print("F: {:15.14f}".format(F))
         
-        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass)
+        c = GPF.calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, molecular_mass, verbose = self.verbose)
         print(c)
 
 
@@ -327,7 +327,7 @@ class Test_small_functions(unittest.TestCase):
         for test in tests:
             with self.subTest(test["description"]):              
         
-                Tc = GPF.calculate_Tc(test["dx"], test["wind_speed"])
+                Tc = GPF.calculate_Tc(test["dx"], test["wind_speed"], verbose = self.verbose)
                 # print(Tc)
                 self.assertTrue(numpy.allclose(test["Tc_expected"], Tc))
 
@@ -353,7 +353,7 @@ class Test_get_molecule_properties(unittest.TestCase):
         ]
         for test in tests:
             with self.subTest(test["description"]): 
-                res = GPF.get_molecule_properties(test["molecule"])
+                res = GPF.get_molecule_properties(test["molecule"], verbose = self.verbose)
                 self.assertTrue(res["name"] == test["name_expected"])
 
     def test_get_molecule_properties_wrong_name(self):
@@ -371,7 +371,7 @@ class Test_get_dispersion_constants(unittest.TestCase):
         self.verbose = 1
 
     def test_basic(self):
-        dc = GPF.get_dispersion_constants(mode = "NOGEPA")
+        dc = GPF.get_dispersion_constants(mode = "NOGEPA", verbose = self.verbose)
         self.assertTrue(dc[0][0] == 1.36)
         self.assertTrue(len(dc) == 6)
         self.assertTrue(len(dc[0]) == 4)
@@ -382,15 +382,15 @@ class Test_get_dispersion_constants(unittest.TestCase):
 if __name__ == '__main__': 
     verbosity = 1
     
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)      
 
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)    
 
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)        
 
@@ -398,15 +398,15 @@ if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)  
         
-    if 0:
+    if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)          
         
