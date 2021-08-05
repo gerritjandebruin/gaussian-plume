@@ -1,7 +1,10 @@
 import importlib 
+from io import StringIO
 import numpy
 import unittest
+from unittest.mock import patch
 import warnings
+import logging
 
 import GPFunctions as GPF
 import GPConstants as GPC
@@ -377,6 +380,36 @@ class Test_get_dispersion_constants(unittest.TestCase):
         self.assertTrue(len(dc[0]) == 4)
         
 
+class Test_print_vars(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+    
+    def funA(self, varA, verbose = 0, self_verbose = 0):
+        GPF.print_vars(function_name = "funA", function_vars = vars(), verbose = verbose, self_verbose = self_verbose)
+
+    def funB(self, varA, verbose = 0, self_verbose = 0, **kwargs):
+        GPF.print_vars(function_name = "funB", function_vars = vars(), verbose = verbose, self_verbose = self_verbose)
+    
+    # try logging tests first
+    # def test_basic(self):
+        # self.funA("x", verbose = 3, self_verbose = 0)
+        # self.funB("x", verbose = 3, self_verbose = 0, fiets = "A")
+
+
+    def test_logging_A(self):
+        test_string = "funA\n    self : test_logging_A (__main__.Test_print_vars)\n    varA : x\n    verbose : 3\n    self_verbose : 0\n"    
+        with patch('sys.stdout', new_callable = StringIO) as mock_stdout:
+            self.funA("x", verbose = 3, self_verbose = 0)
+        self.assertTrue(mock_stdout.getvalue() == test_string)
+
+    def test_logging_B(self):
+        test_string = "funB\n    self : test_logging_B (__main__.Test_print_vars)\n    varA : x\n    verbose : 3\n    self_verbose : 0\n    kwargs:\n        fiets : A\n"
+        with patch('sys.stdout', new_callable = StringIO) as mock_stdout:
+            self.funB("x", verbose = 3, self_verbose = 0, fiets = "A")
+            
+        self.assertTrue(mock_stdout.getvalue() == test_string)        
+
 
      
 if __name__ == '__main__': 
@@ -410,6 +443,8 @@ if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)          
         
-
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
         

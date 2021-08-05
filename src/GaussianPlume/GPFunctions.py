@@ -269,8 +269,21 @@ def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, mo
 
 
 
-
-
+def print_vars(function_name, function_vars, verbose, self_verbose = 0):
+    
+    if self_verbose > verbose:
+        verbose = self_verbose
+    
+    if verbose > 1:
+        print(function_name)           
+    if verbose > 2:
+        for item in function_vars.items():
+            if item[0] == "kwargs":
+                print("    kwargs:")  
+                for k, v in item[1].items():
+                    print("        {:} : {:}".format(k, v))             
+            else:
+                print("    {:} : {:}".format(item[0], item[1]))    
 
 
 
