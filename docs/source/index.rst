@@ -11,7 +11,7 @@ Welcome to GaussianPlume's documentation!
    :caption: Contents:
 
 	GPFunctions
-	GPImportMeasurementParameters
+	GPImportData
 	GPConstants
 
 

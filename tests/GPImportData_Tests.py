@@ -7,9 +7,9 @@ import warnings
 
 
 
-import GPImportMeasurementParameters as GPIMP
+import GPImportData as GPID
 
-importlib.reload(GPIMP)
+importlib.reload(GPID)
 
 class Test_import_measurement_parameters_txt(unittest.TestCase):
 
@@ -20,7 +20,7 @@ class Test_import_measurement_parameters_txt(unittest.TestCase):
         
         paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.txt")
         # print(paf)
-        GPIMP.import_measurement_parameters_txt(paf)
+        GPID.import_measurement_parameters_txt(paf)
 
 
 class Test_import_measurement_parameters_excel(unittest.TestCase):
@@ -31,7 +31,7 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
     def test_basic(self):
         
         paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
-        df_static, df_dynamic = GPIMP.import_measurement_parameters_excel(paf, verbose = self.verbose)
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, verbose = self.verbose)
         
         # empty parameter was removed
         self.assertFalse("var C" in df_static.columns)
@@ -49,14 +49,14 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
     def test_no_static(self):
         
         paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
-        df_static, df_dynamic = GPIMP.import_measurement_parameters_excel(paf, static_parameters = False, dynamic_parameters = True, verbose = self.verbose)
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, static_parameters = False, dynamic_parameters = True, verbose = self.verbose)
         self.assertTrue(df_static is None)
 
 
     def test_no_dynamic(self):
         
         paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
-        df_static, df_dynamic = GPIMP.import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = False, verbose = self.verbose)
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = False, verbose = self.verbose)
         self.assertTrue(df_dynamic is None)        
 
     def test_wrong_paf(self):
@@ -64,11 +64,11 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
         paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\does_not_exist.xlsx")
         
         # test without the path
-        test = "GPImportMeasurementParameters.import_measurement_parameters_excel(): parameter file does not exist (at this location):"
+        test = "GPImportData.import_measurement_parameters_excel(): parameter file does not exist (at this location):"
         test_length = len(test)
         
         with warnings.catch_warnings(record=True) as w:
-            df_static, df_dynamic = GPIMP.import_measurement_parameters_excel(paf, verbose = self.verbose)
+            df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, verbose = self.verbose)
             self.assertTrue(issubclass(w[-1].category, UserWarning))
 
         self.assertEqual(str(w[0].message)[:test_length], test)
@@ -79,7 +79,7 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
         
         
         with self.assertRaises(ValueError) as cm:
-            df_static, df_dynamic = GPIMP.import_measurement_parameters_excel(paf, static_parameters = "wrong sheet name",verbose = self.verbose)
+            df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, static_parameters = "wrong sheet name",verbose = self.verbose)
         self.assertEqual(str(cm.exception), "Worksheet named 'wrong sheet name' not found")
         
         

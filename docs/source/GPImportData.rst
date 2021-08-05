@@ -1,7 +1,7 @@
-GPImportMeasurementParameters module
+GPImportData module
 ====================================
 
-.. automodule:: GPImportMeasurementParameters
+.. automodule:: GPImportData
    :members:
    :undoc-members:
    :show-inheritance:

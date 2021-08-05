@@ -1,13 +1,14 @@
 """
-Import parameter files.
+Data comes in three forms:
 
-Parameters can be static or dynamic. Static parameters don't change during the measurement, for example a device used during the measurement. A dynamic parameters do change over time. This can for example be the terrain roughness. 
+* Measurement data: this is recorded often, typically automatically
+* Dynamic parameters: parameters that change a few times during a measurement. Maybe the terrain roughness. 
+* Static parameters: parameters that do no change during a measurement, for example the type of device used.  
 
-Measurement data is similar to dynamic parameters, in the sense that it changes over time. Dynamic parameters are intended for things that change a few times during a measurement day. Measurement data has a much higher time resolution, for example every second. 
+Measurement data is similar to dynamic parameters, but changes more frequently. Measurement data is recorded automatically, dynamic parameters are typed into an Excel spreadsheet. Temperature may be an edge case. If it is recorded automatically, it is measurement data. If it is recorded twice during a measurement it is a dynamic parameter. If it is recorded only once, it is a static parameter. 
 
-
-Excel
-=====
+Dynamic and static parameters
+=============================
 Static parameters are stored in a sheet named `static parameters' (the sheet names are important). Column A contains the parameter names, column B the parameter values. If a parameter name or value is missing, it is ignored.
 
 This data:
@@ -25,7 +26,7 @@ Device       TNO XYZ
 Stack height 5
 ============ =======
 
-Dynamic parameters are stored in a sheet named "dynamic parameters". Column A contains a time stamp, the other columns the parameters. Row 1 contains the parameter names. The idea is that you only need to fill in the value of the parameter that has changed. If a value is missing, it will use the last valid value, if there is none, it will be set to NaN. 
+Dynamic parameters are stored in a sheet named "dynamic parameters". Column A contains a time stamp, the other columns the parameters. Row 1 contains the parameter names. The idea is that you only need to fill in the value of the parameter that has changed. If a value is missing, it will use the last valid value. If there is no last valid value it will be set to NaN. Note that data is not interpolated. 
 
 This data:
 
@@ -51,6 +52,8 @@ datetime         Roughness Windspeed
 02/08/2018 12:25 F         16
 ================ ========= =========
 
+Note that if a dynamic parameter value is recorded only once, it effectively becomes a static parameter, but as explained in the Technical details, it is treated differently. 
+
 Technical details
 =================
 Data is treated as numpy-arrays (ndarrays) or as a number (integer, float). Numpy works similar to Matlab. You can multiply two ndarrays of the same size, to get a ndarray with the same size. You can also multiply an ndarray with a number, to get an ndarray with the same size:
@@ -60,7 +63,7 @@ Data is treated as numpy-arrays (ndarrays) or as a number (integer, float). Nump
 * distance (ndarray with size = n) / windspeed (number) = time (ndarray with size = n)
 * distance (number) / windspeed (number) = time (number)
 
-
+Measurement data is an ndarray. A static parameter is a number. Dynamic parameters are changed into an ndarray of the same length as the measurement data. 
 
 
 """
@@ -107,7 +110,7 @@ def parse_lines_txt(line, parameters, array):
 
 def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = True, verbose = 0):
     """
-    
+    Import an Excel file with measurement parameters.
     
     Arguments
     ---------
@@ -134,14 +137,14 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
     
     """
     if verbose > 1:
-        print("GPImportMeasurementParameters.import_measurement_parameters_excel()")
+        print("GPImportData.import_measurement_parameters_excel()")
     if verbose > 2:
         print("    paf (path and filename): {:}".format(paf))
         print("    static_parameters: {:}".format(static_parameters))
         print("    dynamic_parameters: {:}".format(dynamic_parameters))
     
     if paf.exists() == False:
-        warnings.warn("GPImportMeasurementParameters.import_measurement_parameters_excel(): parameter file does not exist (at this location): {:}".format(paf))
+        warnings.warn("GPImportData.import_measurement_parameters_excel(): parameter file does not exist (at this location): {:}".format(paf))
         return None, None
     
     with open(paf, "rb") as F:
@@ -165,7 +168,6 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
             
         else:
             df_static = None
-
 
         if dynamic_parameters:
             if type(dynamic_parameters) == str:
