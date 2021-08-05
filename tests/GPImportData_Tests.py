@@ -18,7 +18,7 @@ class Test_import_measurement_parameters_txt(unittest.TestCase):
         
     def test_basic(self):
         
-        paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.txt")
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_1.txt")
         # print(paf)
         GPID.import_measurement_parameters_txt(paf)
 
@@ -30,7 +30,7 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
         
     def test_basic(self):
         
-        paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_1.xlsx")
         df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, verbose = self.verbose)
         
         # empty parameter was removed
@@ -55,13 +55,13 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
 
     def test_no_dynamic(self):
         
-        paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_1.xlsx")
         df_static, df_dynamic = GPID.import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = False, verbose = self.verbose)
         self.assertTrue(df_dynamic is None)        
 
     def test_wrong_paf(self):
         
-        paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\does_not_exist.xlsx")
+        paf = pathlib.Path(r"testdata\inputfiles\does_not_exist.xlsx")
         
         # test without the path
         test = "GPImportData.import_measurement_parameters_excel(): parameter file does not exist (at this location):"
@@ -75,7 +75,7 @@ class Test_import_measurement_parameters_excel(unittest.TestCase):
         
     def test_wrong_sheetname(self):
         
-        paf = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\configuration_1.xlsx")
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_1.xlsx")
         
         
         with self.assertRaises(ValueError) as cm:
