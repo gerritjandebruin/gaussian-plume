@@ -7,7 +7,7 @@ import GPConstants as GPC
 
 importlib.reload(GPC)
 
-def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0):
+def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
     """
     Calculate the distance in meter in north-south and east-west direction for two coordinates. 
     
@@ -42,7 +42,10 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0):
     if verbose > 2:
         for item in vars().items():
             print("    {:}: {:}".format(item[0], item[1]))
-        
+    
+    latlon2dxdy_lon_conversion_factor = kwargs.get("latlon2dxdy_lon_conversion_factor", GPC.latlon2dxdy_lon_conversion_factor)
+    latlon2dxdy_lat_conversion_factor = kwargs.get("latlon2dxdy_lat_conversion_factor", GPC.latlon2dxdy_lat_conversion_factor)
+    
     
     if type(lat) == list:
         lat = numpy.array(lat)
@@ -53,8 +56,8 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0):
     if type(lonR) == list:
         lonR = numpy.array(lonR)        
     
-    dlat = numpy.sin((lat - latR) * GPC.deg2rad) * GPC.latlon2dxdy_lon_conversion_factor
-    dlon = numpy.cos(lat * GPC.deg2rad) * numpy.sin((lon - lonR) * GPC.deg2rad) * GPC.latlon2dxdy_lat_conversion_factor 
+    dlat = numpy.sin((lat - latR) * GPC.deg2rad) * latlon2dxdy_lon_conversion_factor
+    dlon = numpy.cos(lat * GPC.deg2rad) * numpy.sin((lon - lonR) * GPC.deg2rad) * latlon2dxdy_lat_conversion_factor 
     
     return dlat, dlon 
 
@@ -181,7 +184,7 @@ def calculate_Tc(dx, wind_speed, verbose = 0):
     return dx / (3600 * wind_speed)
 
 
-def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability, verbose = 0):
+def calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = 0, **kwargs):
     """
     Calculate the plume width and height at dx. 
     
@@ -215,6 +218,9 @@ def calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability, verbose
     if verbose > 2:
         for item in vars().items():
             print("    {:}: {:}".format(item[0], item[1]))
+    
+    ca = kwargs.get("ca", GPC.sigma_ca)
+    cb = kwargs.get("cb", GPC.sigma_cb)
     
     sigma_y = dispersion_constants[stability,0] * dx**dispersion_constants[stability,1] * z0**0.2 * Tc**0.35
     sigma_z = dispersion_constants[stability,2] * dx**dispersion_constants[stability,3] * (10*z0)**(ca * dx**cb)

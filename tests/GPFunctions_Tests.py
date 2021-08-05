@@ -128,6 +128,61 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         self.assertTrue(numpy.allclose(dlat, dlat_expected))
         self.assertTrue(numpy.allclose(dlon, dlon_expected))
 
+    def test_factor_as_argument_from_gpc(self):
+
+        lat = numpy.array([52.0,52.0,1,52.0])
+        lon = numpy.array([0,3,0,1])
+        latR = numpy.array([50,52,-1,52])
+        lonR = numpy.array([0,1,0,-1])
+        
+        dlat_expected = numpy.array([221847,0,221847,0])
+        dlon_expected = numpy.array([0,137042,0,137042])
+    
+        # latlon2dxdy_lon_conversion_factor = 6378137
+        # latlon2dxdy_lat_conversion_factor = 6356752
+        
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose, latlon2dxdy_lon_conversion_factor = GPC.latlon2dxdy_lon_conversion_factor, latlon2dxdy_lat_conversion_factor = GPC.latlon2dxdy_lat_conversion_factor)
+
+        self.assertTrue(numpy.allclose(dlat, dlat_expected))
+        self.assertTrue(numpy.allclose(dlon, dlon_expected))
+        
+    def test_factor_as_argument_AS_gpc(self):
+
+        lat = numpy.array([52.0,52.0,1,52.0])
+        lon = numpy.array([0,3,0,1])
+        latR = numpy.array([50,52,-1,52])
+        lonR = numpy.array([0,1,0,-1])
+        
+        dlat_expected = numpy.array([221847,0,221847,0])
+        dlon_expected = numpy.array([0,137042,0,137042])
+    
+        latlon2dxdy_lat_conversion_factor = 6378137
+        latlon2dxdy_lon_conversion_factor = 6356752
+        
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose, latlon2dxdy_lon_conversion_factor = latlon2dxdy_lon_conversion_factor, latlon2dxdy_lat_conversion_factor = latlon2dxdy_lat_conversion_factor)
+
+        self.assertTrue(numpy.allclose(dlat, dlat_expected))
+        self.assertTrue(numpy.allclose(dlon, dlon_expected))
+
+
+    def test_factor_as_argument_NON_gpc(self):
+
+        lat = numpy.array([52.0,52.0,1,52.0])
+        lon = numpy.array([0,3,0,1])
+        latR = numpy.array([50,52,-1,52])
+        lonR = numpy.array([0,1,0,-1])
+        
+        dlat_expected = numpy.array([221847,0,221847,0])
+        dlon_expected = numpy.array([0,137042,0,137042])
+    
+        latlon2dxdy_lat_conversion_factor = 6378137 + 1000
+        latlon2dxdy_lon_conversion_factor = 6356752 + 1000
+        
+        dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose, latlon2dxdy_lon_conversion_factor = latlon2dxdy_lon_conversion_factor, latlon2dxdy_lat_conversion_factor = latlon2dxdy_lat_conversion_factor)
+
+        self.assertFalse(numpy.allclose(dlat, dlat_expected))
+        self.assertFalse(numpy.allclose(dlon, dlon_expected))
+
 
 
 class Test_dlatdlon2dxdy(unittest.TestCase):
@@ -249,9 +304,29 @@ class Test_calculate_sigma(unittest.TestCase):
         
         dispersion_constants = GPF.get_dispersion_constants(mode, verbose = self.verbose)
         
-        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, ca, cb, dispersion_constants, stability, verbose = self.verbose)
+        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = self.verbose, ca = ca, cb = cb)
         
         print(sigma_y, sigma_z)
+
+        self.assertTrue(numpy.allclose(sigma_y, sigma_y_expected))
+        self.assertTrue(numpy.allclose(sigma_z, sigma_z_expected))
+
+    def test_ca_cb_from_GPC(self):
+
+        dx = 100
+        z0 = 50
+        Tc = 20
+        mode = "NOGEPA"
+        stability = 0
+        
+        sigma_y_expected = 457.8185733798507 #297.55575321823056
+        sigma_z_expected = 38.11486000170984 #27.643039073928154
+        
+        dispersion_constants = GPF.get_dispersion_constants(mode, verbose = self.verbose)
+        
+        sigma_y, sigma_z = GPF.calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = self.verbose)
+        
+        
 
         self.assertTrue(numpy.allclose(sigma_y, sigma_y_expected))
         self.assertTrue(numpy.allclose(sigma_z, sigma_z_expected))
@@ -419,32 +494,32 @@ if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
         unittest.TextTestRunner(verbosity=verbosity).run(suite)      
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)    
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)    
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)        
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_sigma)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)        
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
         
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)          
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)          
         
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
         
