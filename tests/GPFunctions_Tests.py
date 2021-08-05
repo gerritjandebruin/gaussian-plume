@@ -410,6 +410,98 @@ class Test_small_functions(unittest.TestCase):
                 self.assertTrue(numpy.allclose(test["Tc_expected"], Tc))
 
 
+
+class Test_stability_conversion(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+
+    def test_stability_index2class(self):
+    
+        tests = [
+            {"i": 0, "c": "A"},
+            {"i": 1, "c": "B"},
+            {"i": 2, "c": "C"},
+            {"i": 3, "c": "D"},
+            {"i": 4, "c": "E"},
+            {"i": 5, "c": "F"},
+        ]
+        
+        for test in tests:
+            description = "{:d} -> {:s}".format(test["i"], test["c"])
+            with self.subTest(description):  
+                c = GPF.stability_index2class(test["i"])
+                self.assertTrue(c == test["c"])
+
+    def test_stability_index2class_ndarray(self):
+        i = numpy.arange(6)
+        c = GPF.stability_index2class(i)
+        self.assertTrue(numpy.all(c == numpy.array(["A", "B", "C", "D", "E", "F"])))
+
+    def test_stability_index2class_index_out_of_range(self):
+    
+        i = 6
+        with self.assertRaises(IndexError) as cm:
+            c = GPF.stability_index2class(i)
+        self.assertTrue(str(cm.exception) == "stability_index is 6, which is out of range, it has to be 0, 1, 2, 3, 4, or 5.")
+
+        i = -10
+        with self.assertRaises(IndexError) as cm:
+            c = GPF.stability_index2class(i)
+        self.assertTrue(str(cm.exception) == "stability_index is -10, which is out of range, it has to be 0, 1, 2, 3, 4, or 5.")
+        
+    def test_stability_index2class_ndarray_out_of_range(self):
+        i = numpy.arange(-2,8)
+        
+        with self.assertRaises(IndexError) as cm:
+            c = GPF.stability_index2class(i)
+        self.assertTrue(str(cm.exception) == "stability_index is out of range, it has to be 0, 1, 2, 3, 4, or 5.")        
+
+    def test_stability_class2index(self):
+    
+
+        tests = [
+            {"i": 0, "c": "A"},
+            {"i": 1, "c": "B"},
+            {"i": 2, "c": "C"},
+            {"i": 3, "c": "D"},
+            {"i": 4, "c": "E"},
+            {"i": 5, "c": "F"},
+        ]
+        
+        for test in tests:
+            description = "{:s} -> {:d}".format(test["c"], test["i"])
+            with self.subTest(description):  
+                i = GPF.stability_class2index(test["c"])
+                # print(i)
+                self.assertTrue(i == test["i"])
+
+
+    def test_stability_class2index_ndarray(self):
+        c = numpy.array(["D", "A", "B", "C", "A"])
+        i = GPF.stability_class2index(c)
+        self.assertTrue(numpy.all(i == numpy.array([3,0,1,2,0])))
+
+    def test_stability_class2index_index_out_of_range(self):
+    
+        c = "X"
+        with self.assertRaises(ValueError) as cm:
+            i = GPF.stability_class2index(c)
+        self.assertTrue(str(cm.exception) == "stability_class X does not exist")
+
+    def test_stability_class2index_ndarray_out_of_range(self):
+        c = numpy.array(["A", "x", "y", "B"])
+        with self.assertRaises(ValueError) as cm:
+            i = GPF.stability_class2index(c)
+        self.assertTrue(str(cm.exception) == "Invalid inputs for stability_class: x y")
+
+    def test_stability_class2index_ndarray_out_of_range_many(self):
+        c = numpy.array(["A", "x", "y", "B", "C", "4", "d"])
+        with self.assertRaises(ValueError) as cm:
+            i = GPF.stability_class2index(c)
+        self.assertTrue(str(cm.exception) == "4 invalid inputs for stability_class")
+
+
 class Test_get_molecule_properties(unittest.TestCase):
 
     def setUp(self):
@@ -490,9 +582,9 @@ class Test_print_vars(unittest.TestCase):
 if __name__ == '__main__': 
     verbosity = 1
     
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)      
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)      
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
@@ -509,6 +601,10 @@ if __name__ == '__main__':
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_stability_conversion)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)

@@ -293,6 +293,87 @@ def print_vars(function_name, function_vars, verbose, self_verbose = 0):
 
 
 
+def stability_index2class(stability_index):
+    """
+    Convert stability index (0-5) to a stability class (A-F).
+    
+    Arguments
+    ---------
+    stability_index : int or ndarray/list with int
+        The index 0, 1, 2, 3, 4, or 5
+    
+    Returns
+    -------
+    str
+        A string or an array with strings with the stability class.
+    
+    """
+
+    stability_classes = numpy.array(["A", "B", "C", "D", "E", "F"])
+    
+    if type(stability_index) == int:
+        if stability_index not in range(6):
+            raise IndexError("stability_index is {:d}, which is out of range, it has to be 0, 1, 2, 3, 4, or 5.".format(stability_index))
+    else:
+        if numpy.any(stability_index < 0) or numpy.any(stability_index > 5):
+            raise IndexError("stability_index is out of range, it has to be 0, 1, 2, 3, 4, or 5.")
+    return stability_classes[stability_index]
+
+
+
+def stability_class2index(stability_class):
+    """
+    Convert stability class (A-F) to a stability index (0-5).
+    
+    Arguments
+    ---------
+    stability_class : str or ndarray with str
+        The class A, B, C, D, E, F
+    
+    Returns
+    -------
+    int or ndarray with int
+        An int or an ndarray with int
+    
+    """
+
+    stability_classes = numpy.array(["A", "B", "C", "D", "E", "F"])
+    
+    if type(stability_class) == str:
+        idx = numpy.where(stability_class.upper() == stability_classes)[0]
+        if len(idx) == 0:
+            raise ValueError("stability_class {:s} does not exist".format(stability_class))
+    else:
+
+        # idx = numpy.zeros(len(stability_class), dtype = int)
+        # for s_i, s in enumerate(stability_class):
+            # i = numpy.where(s.upper() == stability_classes)[0]
+            # if len(i) == 0:
+                # raise ValueError("stability_class {:s} does not exist".format(s))            
+            # else:
+                # idx[s_i] = i
+
+        idx = numpy.zeros(len(stability_class), dtype = int) - 1
+        
+        for sc_i, sc in enumerate(stability_classes):
+            i = numpy.where(stability_class == sc)[0]
+            if len(i) > 0:
+                idx[i] = sc_i
+
+        if numpy.any(idx == -1):
+            idx_invalid = numpy.where(idx == -1)[0]
+            
+            if len(idx_invalid) < 3:
+                s = "Invalid inputs for stability_class:"
+                for i, ii in enumerate(idx_invalid):
+                    s = "{:s} {:s}".format(s, stability_class[ii])
+                raise ValueError(s) 
+            else:
+                raise ValueError("{:d} invalid inputs for stability_class".format(len(idx_invalid)))            
+    
+    return idx
+
+
 if __name__ == '__main__': 
     lat = 53.2835083
     lon = 6.30388
