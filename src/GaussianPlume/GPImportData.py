@@ -110,6 +110,11 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
         print("    static_parameters: {:}".format(static_parameters))
         print("    dynamic_parameters: {:}".format(dynamic_parameters))
     
+    if type(paf) == str:
+        # for lazy people 
+        warnings.warn("GPImportData.import_measurement_parameters_excel(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
+        paf = pathlib.Path(paf)
+    
     if paf.exists() == False:
         warnings.warn("GPImportData.import_measurement_parameters_excel(): parameter file does not exist (at this location): {:}".format(paf))
         return None, None
@@ -153,14 +158,43 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
             
 
     
-def import_measurement_data(paf):
+def import_measurement_data(paf, verbose = 0):
     """
-
+    Import csv with measurement data.
+    
+    Arguments
+    ---------
+    paf : pathlib.Path
+        Path and filename of the Excel file with parameters
+    static_parameters : bool (True) or str
+        Read the fixed parameters sheet in the Excel file. If this is a string, it will be used as the sheet name.
+    dynamic_parameters : bool (True) or str
+        Read the dynamic parameters sheet in the Excel file. If this is a string, it will be used as the sheet name.
+    
+    Returns
+    -------
+    Pandas dataframe or None
+        DataFrame with static parameters. None if static_parameters is False
 
     """
+    if verbose > 1:
+        print("GPImportData.import_measurement_data()")
+    if verbose > 2:
+        print("    paf (path and filename): {:}".format(paf))
+
+    if type(paf) == str:
+        # for lazy people 
+        warnings.warn("GPImportData.import_measurement_data(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
+        paf = pathlib.Path(paf)
+
+    if paf.exists() == False:
+        warnings.warn("GPImportData.import_measurement_data(): measurement file does not exist (at this location): {:}".format(paf))
+        return None
+
+    with open(paf, "rb") as F:
+        df = pandas.read_csv(F, header = 0, parse_dates = ["datetime"]) 
     
-    
-    
+    return df
 
     
 
