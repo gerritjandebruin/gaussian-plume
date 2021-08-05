@@ -73,39 +73,6 @@ import pathlib
 import numpy
 import pandas
 import warnings
-
-def import_measurement_parameters_txt(paf):
-    """
-    
-    
-    """
-    
-    parameters = {}
-    array = []
-    with open(paf, "r") as F:
-        for line in F:
-            parse_lines_txt(line, parameters)            
-    
-    print(parameters)
-
-
-
-def parse_lines_txt(line, parameters, array):
-    """
-    
-    
-    """
-    key, value = line.split(":")
-
-    # remove white spaces at start and end of the string
-    key = key.strip()
-    value = value.strip()
-    
-    if value == "start":
-        pass
-
-    parameters[key] = value
-    
     
 
 def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = True, verbose = 0):
@@ -186,6 +153,11 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
             
 
     
+def import_measurement_data(paf):
+    """
+
+
+    """
     
     
     

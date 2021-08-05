@@ -11,16 +11,7 @@ import GPImportData as GPID
 
 importlib.reload(GPID)
 
-class Test_import_measurement_parameters_txt(unittest.TestCase):
 
-    def setUp(self):
-        self.verbose = 1
-        
-    def test_basic(self):
-        
-        paf = pathlib.Path(r"testdata\inputfiles\configuration_1.txt")
-        # print(paf)
-        GPID.import_measurement_parameters_txt(paf)
 
 
 class Test_import_measurement_parameters_excel(unittest.TestCase):
