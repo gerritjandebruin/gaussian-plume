@@ -1,10 +1,13 @@
 """
 Import parameter files.
 
-Parameters can be static or dynamic. Static parameters don't change during the measurement, for example a device used during the measurement. A dynamic parameter does change over time. This can for example be the terrain roughness. 
+Parameters can be static or dynamic. Static parameters don't change during the measurement, for example a device used during the measurement. A dynamic parameters do change over time. This can for example be the terrain roughness. 
+
+Measurement data is similar to dynamic parameters, in the sense that it changes over time. Dynamic parameters are intended for things that change a few times during a measurement day. Measurement data has a much higher time resolution, for example every second. 
+
 
 Excel
------
+=====
 Static parameters are stored in a sheet named `static parameters' (the sheet names are important). Column A contains the parameter names, column B the parameter values. If a parameter name or value is missing, it is ignored.
 
 This data:
@@ -47,6 +50,17 @@ datetime         Roughness Windspeed
 02/08/2018 11:22 E         **11**	
 02/08/2018 12:25 F         16
 ================ ========= =========
+
+Technical details
+=================
+Data is treated as numpy-arrays (ndarrays) or as a number (integer, float). Numpy works similar to Matlab. You can multiply two ndarrays of the same size, to get a ndarray with the same size. You can also multiply an ndarray with a number, to get an ndarray with the same size:
+
+* distance (ndarray with size = n) / windspeed (ndarray with size = n) = time (ndarray with size = n)
+* distance (number) / windspeed (ndarray with size = n) = time (ndarray with size = n)
+* distance (ndarray with size = n) / windspeed (number) = time (ndarray with size = n)
+* distance (number) / windspeed (number) = time (number)
+
+
 
 
 """
