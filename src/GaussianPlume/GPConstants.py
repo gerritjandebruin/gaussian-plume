@@ -9,6 +9,9 @@ rad2deg = 180 / numpy.pi
 
 liter_per_mole_air = 22.36
 
+sigma_ca = 0.53
+sigma_cb = -0.22
+
 def dispersion_constants(mode):
     """
     Return the dispersion values. 
