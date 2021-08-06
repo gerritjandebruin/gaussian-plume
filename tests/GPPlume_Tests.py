@@ -25,7 +25,15 @@ class Test_basic(unittest.TestCase):
         Most basic functionality. 
 
         """
-        P = GPP.Plume()
+        P = GPP.Plume(verbose = 0)
+        
+    def test_stability_setter_getter(self):
+        
+        stability_index = numpy.array([4,3,1])
+        
+        P = GPP.Plume(verbose = 0, stability_index = stability_index)
+        
+        print(P.stability_class)
         
         
 if __name__ == '__main__': 
