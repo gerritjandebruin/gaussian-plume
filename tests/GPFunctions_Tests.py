@@ -478,9 +478,14 @@ class Test_stability_conversion(unittest.TestCase):
 
 
     def test_stability_class2index_ndarray(self):
-        c = numpy.array(["D", "A", "B", "C", "A"])
+        c = numpy.array(["D", "A", "B", "C", "A", "c"])
         i = GPF.stability_class2index(c)
-        self.assertTrue(numpy.all(i == numpy.array([3,0,1,2,0])))
+        self.assertTrue(numpy.all(i == numpy.array([3,0,1,2,0,2])))
+
+    def test_stability_class2index_list(self):
+        c = ["D", "A", "B", "C", "A", "c"]
+        i = GPF.stability_class2index(c)
+        self.assertTrue(numpy.all(i == numpy.array([3,0,1,2,0,2])))        
 
     def test_stability_class2index_index_out_of_range(self):
     
@@ -496,7 +501,7 @@ class Test_stability_conversion(unittest.TestCase):
         self.assertTrue(str(cm.exception) == "Invalid inputs for stability_class: x y")
 
     def test_stability_class2index_ndarray_out_of_range_many(self):
-        c = numpy.array(["A", "x", "y", "B", "C", "4", "d"])
+        c = numpy.array(["A", "x", "y", "B", "C", "4", "d", "t"])
         with self.assertRaises(ValueError) as cm:
             i = GPF.stability_class2index(c)
         self.assertTrue(str(cm.exception) == "4 invalid inputs for stability_class")
@@ -545,6 +550,22 @@ class Test_get_dispersion_constants(unittest.TestCase):
         self.assertTrue(dc[0][0] == 1.36)
         self.assertTrue(len(dc) == 6)
         self.assertTrue(len(dc[0]) == 4)
+
+    def test_lowercase(self):
+        dc = GPF.get_dispersion_constants(mode = "nogepa", verbose = self.verbose)
+        self.assertTrue(dc[0][0] == 1.36)
+        self.assertTrue(len(dc) == 6)
+        self.assertTrue(len(dc[0]) == 4)
+
+
+    def test_invalid_mode(self):
+    
+        test_error = "Mode fiets is invalid for dispersion_constants. Valid options are: 'farm', 'nogepa', 'sea'."
+    
+        with self.assertRaises(IndexError) as cm:
+            dc = GPF.get_dispersion_constants(mode = "fiets", verbose = self.verbose)
+        self.assertTrue(str(cm.exception) == test_error)
+
         
 
 class Test_print_vars(unittest.TestCase):
@@ -602,17 +623,17 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_stability_conversion)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_stability_conversion)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
         
-    # if 1:
-        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
-        # unittest.TextTestRunner(verbosity=verbosity).run(suite)          
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)          
         
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )

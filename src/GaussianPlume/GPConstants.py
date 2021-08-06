@@ -45,6 +45,9 @@ def dispersion_constants(mode):
             [0.238, 0.902, 0.12, 0.67],
             [0.2,   0.902, 0.1,  0.62],
         ])
+    else:
+        raise IndexError("Mode {:s} is invalid for dispersion_constants. Valid options are: 'farm', 'nogepa', 'sea'.".format(mode))
+        
     return dispersion
         
 def molecule_properties(molecule):
