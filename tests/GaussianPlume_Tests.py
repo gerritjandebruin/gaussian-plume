@@ -36,19 +36,19 @@ class Test_add_parameter_files(unittest.TestCase):
 
     def test_basic(self):
         
-        path_and_filenames = ["a", "b", "c"]
+        filenames = ["a", "b", "c"]
         
         G = GP.GaussianPlume(verbose = self.verbose)
-        G.add_parameter_files(path_and_filenames)
+        G.add_parameter_files(filenames)
         self.assertTrue(len(G.plumes) == 3)
 
 
     def test_add_single_file(self):
         
-        path_and_filenames = "a"
+        filenames = "a"
         
         G = GP.GaussianPlume(verbose = self.verbose)
-        G.add_parameter_files(path_and_filenames)
+        G.add_parameter_files(filenames)
         self.assertTrue(len(G.plumes) == 1)
         
 class Test_pickling(unittest.TestCase):
@@ -94,6 +94,39 @@ class Test_pickling(unittest.TestCase):
         # remove the pickle
         pickle_paf = self.pickle_path.joinpath(pickle_filename)
         pickle_paf.unlink()
+
+
+    def test_save_load_multiple_single_plumes(self):
+        """
+        Make some plumes, save a two plumes. Then load the plumes. It will be added to the plumes. 
+        
+        """
+        path_and_filenames = ["a", "b", "c", "d", "e"]
+        
+        G = GP.GaussianPlume(verbose = self.verbose)
+        G.add_parameter_files(path_and_filenames)    
+
+        for i in range(len(path_and_filenames)):
+            G.plumes[i].windspeed = i
+
+        pickle_filenames = ["tempfile_test_pickling_test_save_load_multiple_single_plumes_1.pickle", "tempfile_test_pickling_test_save_load_multiple_single_plumes_3.pickle"]
+        plume_indices = [1,3]
+
+        G.save_plume(pickle_path = self.pickle_path, pickle_filename = pickle_filenames, plume_index = plume_indices)
+        
+        G.load_plume(pickle_path = self.pickle_path, pickle_filename = pickle_filenames)
+        self.assertTrue(len(G.plumes) == 7)
+        
+        # set the original object to a high windspeed, then check if the re-imported object has the original (low) windspeed
+        G.plumes[1].windspeed = 100
+        self.assertTrue(G.plumes[5].windspeed == 1)
+        self.assertTrue(G.plumes[1].windspeed == 100)
+
+        # remove the pickle
+        for pickle_filename in pickle_filenames:
+            pickle_paf = self.pickle_path.joinpath(pickle_filename)
+            pickle_paf.unlink()
+
 
 
     def test_save_load_plumes(self):
@@ -152,7 +185,7 @@ class Test_pickling(unittest.TestCase):
         
         # import plumes, objects in memory are discarded
         G.load_plumes(pickle_path = self.pickle_path, pickle_filename = pickle_filename, append_to_plumes = True)
-        print(G.plumes)
+        # print(G.plumes)
         # check for the original windspeeds 
         self.assertTrue(len(G.plumes) == 6)
         self.assertTrue(G.plumes[1].windspeed == 11)
@@ -176,7 +209,7 @@ class Test_pickling(unittest.TestCase):
         for i in range(len(path_and_filenames)):
             G.plumes[i].windspeed = i
 
-        pickle_filename = "tempfile_test_pickling_test_save_load_plumes_append.pickle"
+        pickle_filename = "tempfile_test_pickling_test_save_load_plumes_to_new_GP.pickle"
 
         G.save_plumes(pickle_path = self.pickle_path, pickle_filename = pickle_filename)
         G = None
@@ -185,12 +218,11 @@ class Test_pickling(unittest.TestCase):
         
         # import plumes to P
         P.load_plumes(pickle_path = self.pickle_path, pickle_filename = pickle_filename, append_to_plumes = True)
-        print(P.plumes)
+        # print(P.plumes)
         # check for the original windspeeds 
-        self.assertTrue(len(G.plumes) == 6)
-        self.assertTrue(G.plumes[1].windspeed == 11)
-        self.assertTrue(G.plumes[4].windspeed == 1)
-
+        self.assertTrue(len(P.plumes) == 3)
+        self.assertTrue(P.plumes[1].windspeed == 1)
+        
         # remove the pickle
         pickle_paf = self.pickle_path.joinpath(pickle_filename)
         pickle_paf.unlink()
