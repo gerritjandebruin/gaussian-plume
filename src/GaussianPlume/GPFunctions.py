@@ -249,7 +249,26 @@ def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, mo
 
 
 def print_vars(function_name, function_vars, verbose, self_verbose = 0):
+    """
+    Check the verbose level and print the arguments
     
+    Arguments
+    ---------
+    function_name : str
+        The name of the function. 
+    function_vars : dict
+        Call the vars() function.
+    verbose : number
+        Verbose level of the function.
+    self_verbose : number (0)
+        Verbose level of the class, if applicable. Defaults to zero.
+        
+    Returns
+    -------
+    int 
+        The higher of verbose and self_verbose
+        
+    """
     if self_verbose > verbose:
         verbose = self_verbose
     
