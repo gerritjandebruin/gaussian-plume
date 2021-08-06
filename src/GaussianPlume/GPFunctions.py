@@ -382,7 +382,7 @@ def stability_class2index(stability_class):
 
 def handle_filename_path(filename, path, verbose = 0):
     """
-    Add the paths and filenames of the parameter files.
+    Add the paths and filenames of the parameter files. Note that this function does not check if the path exists or whether it makes sense. 
     
     Arguments
     ---------
@@ -390,6 +390,12 @@ def handle_filename_path(filename, path, verbose = 0):
         A single filename or list with filenames. The filename(s) may contain the path as well. They must contain the extension. The filename(s) can be a string or a pathlib object. 
     path : None
         A path or a list with paths. Defaults to None, which means the path is not needed or the path is included in the filename(s). The path(s) can be a string or a pathlib object. 
+    
+    Returns
+    -------
+    list
+        A list with paths and filenames. 
+    
     
     Notes
     -----
