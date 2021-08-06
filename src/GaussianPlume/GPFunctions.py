@@ -344,7 +344,8 @@ def stability_class2index(stability_class):
         if len(idx) == 0:
             raise ValueError("stability_class {:s} does not exist".format(stability_class))
     else:
-
+        if type(stability_class) == list:   
+            stability_class = numpy.array(stability_class)
         # idx = numpy.zeros(len(stability_class), dtype = int)
         # for s_i, s in enumerate(stability_class):
             # i = numpy.where(s.upper() == stability_classes)[0]
@@ -359,6 +360,10 @@ def stability_class2index(stability_class):
             i = numpy.where(stability_class == sc)[0]
             if len(i) > 0:
                 idx[i] = sc_i
+
+            i = numpy.where(stability_class == sc.lower())[0]
+            if len(i) > 0:
+                idx[i] = sc_i                
 
         if numpy.any(idx == -1):
             idx_invalid = numpy.where(idx == -1)[0]
