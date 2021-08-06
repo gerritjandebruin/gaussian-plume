@@ -38,11 +38,7 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
     
     
     """
-    if verbose > 1:
-        print("GPFunctions.latlon2dlatdlon()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))
+    verbose = print_vars(function_name = "GPFunctions.latlon2dlatdlon()", function_vars = vars(), verbose = verbose, self_verbose = 0)   
     
     latlon2dxdy_lon_conversion_factor = kwargs.get("latlon2dxdy_lon_conversion_factor", GPC.latlon2dxdy_lon_conversion_factor)
     latlon2dxdy_lat_conversion_factor = kwargs.get("latlon2dxdy_lat_conversion_factor", GPC.latlon2dxdy_lat_conversion_factor)
@@ -86,11 +82,7 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = 0):
     
     """
 
-    if verbose > 1:
-        print("GPFunctions.dlatdlon2dxdy()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))
+    verbose = print_vars(function_name = "GPFunctions.dlatdlon2dxdy()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
     if type(dlatS) == list:
         dlatS = numpy.array(dlatS)
@@ -124,11 +116,7 @@ def get_dispersion_constants(mode, verbose = 0):
         A table with constants. Rows are the stability classes, columns the factors. 
     
     """
-    if verbose > 1:
-        print("GPFunctions.get_dispersion_constants()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))  
+    verbose = print_vars(function_name = "GPFunctions.get_dispersion_constants()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
     return GPC.dispersion_constants(mode)
 
@@ -149,11 +137,7 @@ def get_molecule_properties(molecule, verbose = 0):
         Dictionary with molecule properties
     
     """
-    if verbose > 1:
-        print("GPFunctions.get_molecule_properties()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))  
+    verbose = print_vars(function_name = "GPFunctions.get_molecule_properties()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
     return GPC.molecule_properties(molecule)
 
@@ -176,11 +160,7 @@ def calculate_Tc(dx, wind_speed, verbose = 0):
         Travel time in seconds. 
     
     """
-    if verbose > 1:
-        print("GPFunctions.calculate_Tc()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1])) 
+    verbose = print_vars(function_name = "GPFunctions.calculate_Tc()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
     return dx / (3600 * wind_speed)
 
@@ -214,11 +194,7 @@ def calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = 0, **
         Values for the disk diameter in y and z direction.
     
     """
-    if verbose > 1:
-        print("GPFunctions.calculate_sigma()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))
+    verbose = print_vars(function_name = "GPFunctions.calculate_sigma()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
     ca = kwargs.get("ca", GPC.sigma_ca)
     cb = kwargs.get("cb", GPC.sigma_cb)
@@ -259,11 +235,7 @@ def calculate_concentration(Qs, wind_speed, sigma_y, sigma_z, dy, Zr, Hs, Hm, mo
         Molecular mass in g/mol. 
         
     """
-    if verbose > 1:
-        print("GPFunctions.calculate_concentration()")
-    if verbose > 2:
-        for item in vars().items():
-            print("    {:}: {:}".format(item[0], item[1]))
+    verbose = print_vars(function_name = "GPFunctions.calculate_concentration()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
         
     A = Qs / (2 * numpy.pi * wind_speed * sigma_y * sigma_z)
     B = numpy.exp(-dy**2 / (2 * sigma_y**2))
@@ -310,6 +282,8 @@ def stability_index2class(stability_index):
         A string or an array with strings with the stability class.
     
     """
+    verbose = print_vars(function_name = "GPFunctions.stability_index2class()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
+
 
     stability_classes = numpy.array(["A", "B", "C", "D", "E", "F"])
     
@@ -338,6 +312,8 @@ def stability_class2index(stability_class):
         An int or an ndarray with int
     
     """
+
+    verbose = print_vars(function_name = "GPFunctions.stability_class2index()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
 
     stability_classes = numpy.array(["A", "B", "C", "D", "E", "F"])
     
@@ -436,7 +412,7 @@ def handle_filename_path(filename, path, verbose = 0):
     
     
     """
-    print_vars(function_name = "GPFunctions.handle_filename_path()", function_vars = vars(), verbose = verbose, self_verbose = 0)
+    verbose = print_vars(function_name = "GPFunctions.handle_filename_path()", function_vars = vars(), verbose = verbose, self_verbose = 0)
     
     if type(filename) != list:  
         filename = [filename]

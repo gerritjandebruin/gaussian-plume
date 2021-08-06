@@ -103,12 +103,7 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
         If the file is not found at the paf. 
     
     """
-    if verbose > 1:
-        print("GPImportData.import_measurement_parameters_excel()")
-    if verbose > 2:
-        print("    paf (path and filename): {:}".format(paf))
-        print("    static_parameters: {:}".format(static_parameters))
-        print("    dynamic_parameters: {:}".format(dynamic_parameters))
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel()", function_vars = vars(), verbose = verbose, self_verbose = 0)
     
     if type(paf) == str:
         # for lazy people 
@@ -177,10 +172,7 @@ def import_measurement_data(paf, verbose = 0):
         DataFrame with static parameters. None if static_parameters is False
 
     """
-    if verbose > 1:
-        print("GPImportData.import_measurement_data()")
-    if verbose > 2:
-        print("    paf (path and filename): {:}".format(paf))
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
 
     if type(paf) == str:
         # for lazy people 
