@@ -291,7 +291,8 @@ def print_vars(function_name, function_vars, verbose, self_verbose = 0):
                     print("        {:} : {:}".format(k, v))             
             else:
                 print("    {:} : {:}".format(item[0], item[1]))    
-
+    
+    return verbose
 
 
 def stability_index2class(stability_index):
