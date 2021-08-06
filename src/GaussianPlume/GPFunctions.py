@@ -1,4 +1,5 @@
 import importlib
+import pathlib
 import numpy
 
 
@@ -377,6 +378,88 @@ def stability_class2index(stability_class):
                 raise ValueError("{:d} invalid inputs for stability_class".format(len(idx_invalid)))            
     
     return idx
+
+def handle_filename_path(filename, path, verbose = 0):
+    """
+    Add the paths and filenames of the parameter files.
+    
+    Arguments
+    ---------
+    filename : 
+        A single filename or list with filenames. The filename(s) may contain the path as well. They must contain the extension. The filename(s) can be a string or a pathlib object. 
+    path : None
+        A path or a list with paths. Defaults to None, which means the path is not needed or the path is included in the filename(s). The path(s) can be a string or a pathlib object. 
+    
+    Notes
+    -----
+    There are a number of options:
+    
+    * filename = 'C:/path/filename.ext', path = None
+    
+        * ['C:/path/filename.ext']
+        
+    * filename = ['C:/path/filename.ext'], path = None
+    
+        * ['C:/path/filename.ext']
+    
+    * filename = 'filename.ext', path = 'C:/path' 
+    
+        * ['C:/path/filename.ext']
+    
+    * filename = ['C:/path_1/filename_1.ext', 'C:/path_1/filename_2.ext']
+    
+        * ['C:/path_1/filename_1.ext', 'C:/path_1/filename_2.ext']
+    
+    * filename = ['filename_1.ext', 'filename_2.ext'], path = 'C:/path' 
+
+        * ['C:/path/filename_1.ext', 'C:/path/filename_2.ext']
+    
+    * filename = ['filename_1.ext', 'filename_2.ext'], path = ['C:/path_1', 'C:/path_2'] 
+
+        * ['C:/path_1/filename_1.ext', 'C:/path_2/filename_2.ext']
+    
+    The following options are invalid:
+
+    * Lengths are not the same
+    
+        * filename = ['filename_1.ext', 'filename_2.ext', 'filename_3.ext'], path = ['C:/path_1', 'C:/path_2'] 
+        * filename = ['filename_1.ext', 'filename_2.ext'], path = ['C:/path_1', 'C:/path_2', 'C:/path_3'] 
+
+         
+    
+    
+    """
+    print_vars(function_name = "GPFunctions.handle_filename_path()", function_vars = vars(), verbose = verbose, self_verbose = 0)
+    
+    if type(filename) != list:  
+        filename = [filename]
+    
+    for f_i, fn in enumerate(filename):
+        if not isinstance(fn, pathlib.Path):
+            filename[f_i] = pathlib.Path(fn)
+    
+    if path is None:
+        return filename
+    
+    if type(path) == list:
+        if len(filename) != len(path):
+            raise IndexError("Length of filename ({:d}) and path ({:d}) is not the same.".format(len(filename), len(path)))
+        else:
+            paf = []
+            for p_i, p in enumerate(path):
+                if not isinstance(p, pathlib.Path):
+                    p = pathlib.Path(p)
+                paf.append(p.joinpath(filename[p_i]))
+                
+    else:
+        paf = []
+        if not isinstance(path, pathlib.Path):
+            path = pathlib.Path(path)
+        for f_i, f in enumerate(filename):
+            paf.append(path.joinpath(f))
+    
+    return paf
+
 
 
 if __name__ == '__main__': 

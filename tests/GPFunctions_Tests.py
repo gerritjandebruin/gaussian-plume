@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 import warnings
 import logging
+import pathlib
 
 import GPFunctions as GPF
 import GPConstants as GPC
@@ -599,6 +600,94 @@ class Test_print_vars(unittest.TestCase):
         self.assertTrue(mock_stdout.getvalue() == test_string)        
 
 
+
+class Test_handle_filename_path(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+
+
+    def test_cases(self):
+    
+        out_xx = pathlib.Path('C:/path/filename.ext')
+        out_x1 = pathlib.Path('C:/path/filename_1.ext')
+        out_x2 = pathlib.Path('C:/path/filename_2.ext')
+        out_11 = pathlib.Path('C:/path_1/filename_1.ext')
+        out_12 = pathlib.Path('C:/path_1/filename_2.ext')
+        out_21 = pathlib.Path('C:/path_2/filename_1.ext')
+        out_22 = pathlib.Path('C:/path_2/filename_2.ext')
+    
+        tests = [
+            {"filename": 'C:/path/filename.ext', "path": None, "output": [out_xx]},
+            {"filename": ['C:/path/filename.ext'], "path": None, "output": [out_xx]},
+            {"filename": 'filename.ext', "path": "C:/path", "output": [out_xx]},
+            {"filename": ['C:/path/filename_1.ext', 'C:/path/filename_2.ext'], "path": None, "output": [out_x1, out_x2]},
+            {"filename": ['filename_1.ext', 'filename_2.ext'], "path": 'C:/path', "output": [out_x1, out_x2]},
+            {"filename": ['filename_1.ext', 'filename_2.ext'], "path": ['C:/path_1', 'C:/path_2'], "output": [out_11, out_22]},
+            
+            {"filename": pathlib.Path('C:/path/filename.ext'), "path": None, "output": [out_xx]},
+            {"filename": [pathlib.Path('C:/path/filename.ext')], "path": None, "output": [out_xx]},
+            
+            {"filename": pathlib.Path('filename.ext'), "path": "C:/path", "output": [out_xx]},
+            {"filename": 'filename.ext', "path": pathlib.Path("C:/path"), "output": [out_xx]},
+            {"filename": pathlib.Path('filename.ext'), "path": pathlib.Path("C:/path"), "output": [out_xx]},
+            
+            {"filename": [pathlib.Path('C:/path/filename_1.ext'), 'C:/path/filename_2.ext'], "path": None, "output": [out_x1, out_x2]},
+            {"filename": [pathlib.Path('filename_1.ext'), 'filename_2.ext'], "path": 'C:/path', "output": [out_x1, out_x2]},
+            {"filename": [pathlib.Path('filename_1.ext'), 'filename_2.ext'], "path": ['C:/path_1', pathlib.Path('C:/path_2')], "output": [out_11, out_22]},            
+            # {"filename": , "path": , "output": },
+            # {"filename": , "path": , "output": },
+            # {"filename": , "path": , "output": },
+        ]
+
+        for test in tests:
+            with self.subTest():            
+                result = GPF.handle_filename_path(filename = test["filename"], path = test["path"])
+                self.assertTrue(result == test["output"])
+
+        
+    def test_different_lengths(self):
+        
+        filename = ['filename_1.ext', 'filename_2.ext', 'filename_3.ext']
+        path = ['C:/path_1', 'C:/path_2']
+        
+        test_error = "Length of filename (3) and path (2) is not the same."
+        
+        with self.assertRaises(IndexError) as cm:
+            result = GPF.handle_filename_path(filename = filename, path = path)
+        self.assertTrue(str(cm.exception) == test_error)
+
+        filename = ['filename_1.ext', 'filename_2.ext']
+        path = ['C:/path_1', 'C:/path_2', 'C:/path_3']
+        
+        test_error = "Length of filename (2) and path (3) is not the same."
+        
+        with self.assertRaises(IndexError) as cm:
+            result = GPF.handle_filename_path(filename = filename, path = path)
+        self.assertTrue(str(cm.exception) == test_error)
+
+    def test_type_errors(self):
+        
+        tests = [
+            {"filename": None, "path": None},
+            {"filename": 5, "path": None},        
+            {"filename": "fiets", "path": 5},
+            # {"filename": , "path": },
+            # {"filename": , "path": },
+            # {"filename": , "path": },
+            # {"filename": , "path": },
+            # {"filename": , "path": },            
+        ]
+
+        for test in tests:
+            with self.subTest():     
+                with self.assertRaises(TypeError) as cm:
+                    result = GPF.handle_filename_path(filename = test["filename"], path = test["path"])
+                self.assertTrue(len(str(cm.exception)) > 0)
+
+
+
+                
      
 if __name__ == '__main__': 
     verbosity = 1
@@ -631,12 +720,14 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_molecule_properties)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
         
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)          
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_get_dispersion_constants)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)          
         
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-        
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_handle_filename_path)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)               
