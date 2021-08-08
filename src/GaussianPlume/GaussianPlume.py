@@ -6,13 +6,16 @@
 
 import importlib
 import pickle
+import pathlib
 
+import PythonTools.ClassTools as CT
 import GPFunctions as GPF
 import GPPlumeModel as GPPM
-import PythonTools.ClassTools as CT
+import GPImportData as GPID
 
 importlib.reload(GPF)
 importlib.reload(GPPM)
+importlib.reload(GPID)
 
 
 class GaussianPlume(CT.ClassTools):
@@ -61,7 +64,7 @@ class GaussianPlume(CT.ClassTools):
         paf = GPF.handle_filename_path(filename, path, verbose = verbose)
         
         for p in paf:
-            X = GPPM.Plume(verbose = self.verbose)
+            X = GPPM.Plume(parameter_filename = p, verbose = self.verbose)
             self.plumes.append(X)
             
             
@@ -201,10 +204,23 @@ class GaussianPlume(CT.ClassTools):
                 self.plumes += pickle.load(F)
                 
         
+    def import_plume(self, plume_index, verbose = 0, **kwargs):
+        """
         
         
+        """
+        verbose = GPF.print_vars(function_name = "GaussianPlume.import_plume()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
         
+        static_parameters = kwargs.get("static_parameters", True)
+        dynamic_parameters = kwargs.get("dynamic_parameters", True)
         
+        self.plumes[plume_index].import_data(static_parameters = static_parameters, dynamic_parameters = dynamic_parameters, verbose = verbose)
+
+        
+        # paf = pathlib.Path(df_static.loc[0,"measurement_data_path_and_filename"]) #.astype(str))
+        # df = GPID.import_measurement_data(paf, verbose = verbose)
+        
+        # print(df)
         
         
         
