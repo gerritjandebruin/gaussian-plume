@@ -73,9 +73,11 @@ import pathlib
 import numpy
 import pandas
 import warnings
+
+import GPFunctions as GPF
     
 
-def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = True, verbose = 0):
+def import_measurement_parameters_excel_helper(paf, static_parameters = True, dynamic_parameters = True, verbose = 0):
     """
     Import an Excel file with measurement parameters.
     
@@ -103,15 +105,15 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
         If the file is not found at the paf. 
     
     """
-    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel()", function_vars = vars(), verbose = verbose, self_verbose = 0)
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel_helper()", function_vars = vars(), verbose = verbose, self_verbose = 0)
     
     if type(paf) == str:
         # for lazy people 
-        warnings.warn("GPImportData.import_measurement_parameters_excel(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
+        warnings.warn("GPImportData.import_measurement_parameters_excel_helper(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
         paf = pathlib.Path(paf)
     
     if paf.exists() == False:
-        warnings.warn("GPImportData.import_measurement_parameters_excel(): parameter file does not exist (at this location): {:}".format(paf))
+        warnings.warn("GPImportData.import_measurement_parameters_excel_helper(): parameter file does not exist (at this location): {:}".format(paf))
         return None, None
     
     with open(paf, "rb") as F:
@@ -152,15 +154,15 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
     return df_static, df_dynamic
             
 
-    
-def import_measurement_data(paf, verbose = 0):
+
+def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_parameters = True, verbose = 0):
     """
-    Import csv with measurement data.
+    Import a list with Excel files with measurement parameters.
     
     Arguments
     ---------
     paf : pathlib.Path
-        Path and filename of the Excel file with parameters
+        A list with path and filename of the Excel file with parameters
     static_parameters : bool (True) or str
         Read the fixed parameters sheet in the Excel file. If this is a string, it will be used as the sheet name.
     dynamic_parameters : bool (True) or str
@@ -170,17 +172,61 @@ def import_measurement_data(paf, verbose = 0):
     -------
     Pandas dataframe or None
         DataFrame with static parameters. None if static_parameters is False
+    Pandas dataframe or None
+        DataFrame with dynamic parameters.None if dynamic_parameters is False
+
+    
+    """
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel()", function_vars = vars(), verbose = verbose, self_verbose = 0)
+    
+    if type(paf) != list:
+        paf = [paf]
+    
+    df_static = None
+    df_dynamic = None
+    for p in paf:
+        _df_static, _df_dynamic = import_measurement_parameters_excel_helper(p, static_parameters = static_parameters, dynamic_parameters = dynamic_parameters, verbose = verbose)
+        
+        if df_static is None:
+            df_static = _df_static
+        else:
+            df_static = pandas.concat([df_static, _df_static], axis = 1)
+            df_static = df_static.reset_index(drop = True)
+            
+        if df_dynamic is None:
+            df_dynamic = _df_dynamic                
+        else:
+            df_dynamic = pandas.concat([df_dynamic, _df_dynamic]) 
+
+    df_static = df_static.loc[:,~df_static.columns.duplicated()]
+    
+    return df_static, df_dynamic
+    
+    
+def import_measurement_data_helper(paf, verbose = 0):
+    """
+    Import csv with measurement data.
+    
+    Arguments
+    ---------
+    paf : pathlib.Path
+        Path and filename of the Excel file with parameters
+    
+    Returns
+    -------
+    Pandas dataframe or None
+        DataFrame with measurement data
 
     """
-    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_parameters_excel()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_data_helper()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
 
     if type(paf) == str:
         # for lazy people 
-        warnings.warn("GPImportData.import_measurement_data(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
+        warnings.warn("GPImportData.import_measurement_data_helper(): please give paf (path and filename) as pathlib path, not as string: {:}".format(paf))
         paf = pathlib.Path(paf)
 
     if paf.exists() == False:
-        warnings.warn("GPImportData.import_measurement_data(): measurement file does not exist (at this location): {:}".format(paf))
+        warnings.warn("GPImportData.import_measurement_data_helper(): measurement file does not exist (at this location): {:}".format(paf))
         return None
 
     with open(paf, "rb") as F:
@@ -189,6 +235,50 @@ def import_measurement_data(paf, verbose = 0):
     return df
 
     
+def import_measurement_data(paf, verbose = 0):
+    """
+    Import a list with csv's with measurement data.
+    
+    Arguments
+    ---------
+    paf : pathlib.Path
+        Path and filename of the Excel file with parameters
+    
+    Returns
+    -------
+    Pandas dataframe or None
+        DataFrame with measurement data
 
+    """
+    verbose = GPF.print_vars(function_name = "GPImportData.import_measurement_data()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
+    
+    if type(paf) != list:
+        paf = [paf]
+    
+    df = None
+    for p in paf:
+        _df = import_measurement_data_helper(p, verbose = 0)
+        
+        if df is None:
+            df = _df
+        else:
+            if numpy.all(df.columns == _df.columns):
+                df = pandas.concat([df, _df])
+            else:
+                raise pandas.errors.InvalidIndexError
+            
+    df = df.reset_index(drop = True)
+    
+    return df 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
