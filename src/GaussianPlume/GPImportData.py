@@ -130,6 +130,9 @@ def import_measurement_parameters_excel_helper(paf, static_parameters = True, dy
             df_static = df_static.transpose()
             df_static = df_static.reset_index(drop = True)
             
+            # reduces memory usage, especially when added to measurement data
+            df_static = df_static.astype("category")
+            
             # remove parameters without a value
             for cl in df_static.columns:
                 if pandas.isna(df_static.loc[0,cl]): 
@@ -148,6 +151,9 @@ def import_measurement_parameters_excel_helper(paf, static_parameters = True, dy
             
             # forward fill data
             df_dynamic.fillna(method = "ffill", inplace = True) 
+            
+            # reduces memory usage, especially when added to measurement data
+            df_dynamic = df_dynamic.astype("category")
         else:
             df_dynamic = None
           
@@ -187,18 +193,20 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
     for p in paf:
         _df_static, _df_dynamic = import_measurement_parameters_excel_helper(p, static_parameters = static_parameters, dynamic_parameters = dynamic_parameters, verbose = verbose)
         
-        if df_static is None:
-            df_static = _df_static
-        else:
-            df_static = pandas.concat([df_static, _df_static], axis = 1)
-            df_static = df_static.reset_index(drop = True)
+        if _df_static is not None:
+            if df_static is None:
+                df_static = _df_static
+            else:
+                df_static = pandas.concat([df_static, _df_static], axis = 1)
+                df_static = df_static.reset_index(drop = True)
             
         if df_dynamic is None:
             df_dynamic = _df_dynamic                
         else:
             df_dynamic = pandas.concat([df_dynamic, _df_dynamic]) 
 
-    df_static = df_static.loc[:,~df_static.columns.duplicated()]
+    if df_static is not None:
+        df_static = df_static.loc[:,~df_static.columns.duplicated()]
     
     return df_static, df_dynamic
     
@@ -273,7 +281,55 @@ def import_measurement_data(paf, verbose = 0):
     
     
     
+def merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = 0):
+    """
     
+    
+    """
+    verbose = GPF.print_vars(function_name = "GPImportData.merge_measurement_static_dynamic_df()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
+    
+    if df is None:
+        print("GPImportData.merge_measurement_static_dynamic_df(): df can not be None.")
+        raise ValueError
+
+    df_rows, df_cols = df.shape
+        
+    if df_static is not None:
+        df_s_rows, df_s_cols = df_static.shape
+        # add the static parameters. Concat adds it as a row to the end, it is then backfilled. Finally the last (added) row is removed. 
+        df_static = df_static.astype("category")
+        df = pandas.concat([df, df_static]).reset_index(drop = True)
+        df.fillna(method = "bfill", inplace = True) 
+        df.drop(index = df_rows, axis = 0, inplace = True)
+    
+    if df_dynamic is not None:
+    
+        df_d_rows, df_d_cols = df_dynamic.shape
+
+        # make a new dataframe, size is the number of columns in df_dynamic, minus to column for datetime
+        df_times = pandas.to_datetime(df.loc[:,"datetime"])
+        df_d_times = pandas.to_datetime(df_dynamic.loc[:,"datetime"])
+        df_d_colnames = df_dynamic.columns
+
+        temp = numpy.zeros((df_rows, df_d_cols-1))
+        temp[:,:] = numpy.nan
+
+        temp_df = pandas.DataFrame(temp, columns = df_d_colnames[1:])
+
+        for t_i, t in enumerate(df_d_times):
+            idx = numpy.where(df_times > t)[0][0]
+            temp_df.loc[idx, df_d_colnames[1:]] = df_dynamic.loc[t_i, df_d_colnames[1:]]
+
+        temp_df.fillna(method = "ffill", inplace = True) 
+        temp_df = temp_df.astype("category")
+        df = pandas.concat([df, temp_df], axis = 1)
+    
+    return df
+    
+    
+    
+
+
     
     
     

@@ -162,7 +162,7 @@ class Plume(CT.ClassTools):
 
         df = GPID.import_measurement_data(measurement_paf, verbose = verbose)
 
-
+        self.df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = verbose)
 
 
 

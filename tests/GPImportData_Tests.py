@@ -1,8 +1,10 @@
 import importlib 
+from io import StringIO
 import pathlib
 import numpy
 import pandas
 import unittest
+from unittest.mock import patch
 import warnings
 
 
@@ -218,6 +220,60 @@ class Test_import_measurement_data(unittest.TestCase):
             df = GPID.import_measurement_data(paf, verbose = self.verbose)
 
 
+
+class Test_merge_measurement_static_dynamic_df(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+
+    def test_basic(self):
+    
+        measurement_paf = [pathlib.Path(r"testdata\inputfiles\data_peaksonly_1.csv")]
+        df = GPID.import_measurement_data(measurement_paf, verbose = self.verbose)
+
+        parameter_paf = [pathlib.Path(r"testdata\inputfiles\configuration_3a.xlsx")]
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(parameter_paf, verbose = self.verbose)
+
+        df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = self.verbose)
+        self.assertTrue(df.shape == (1715,12))
+        
+    def test_dynamic_is_None(self):
+    
+        measurement_paf = [pathlib.Path(r"testdata\inputfiles\data_peaksonly_1.csv")]
+        df = GPID.import_measurement_data(measurement_paf, verbose = self.verbose)
+
+        parameter_paf = [pathlib.Path(r"testdata\inputfiles\configuration_3a.xlsx")]
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(parameter_paf, static_parameters = True, dynamic_parameters = False, verbose = self.verbose)
+
+        df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = self.verbose)
+        self.assertTrue(df.shape == (1715,10))
+        
+    def test_static_is_None(self):
+    
+        measurement_paf = [pathlib.Path(r"testdata\inputfiles\data_peaksonly_1.csv")]
+        df = GPID.import_measurement_data(measurement_paf, verbose = self.verbose)
+
+        parameter_paf = [pathlib.Path(r"testdata\inputfiles\configuration_3a.xlsx")]
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(parameter_paf, static_parameters = False, dynamic_parameters = True, verbose = self.verbose)
+
+        df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = self.verbose)
+        self.assertTrue(df.shape == (1715,9))        
+        
+    def test_df_is_None(self):
+    
+        df = None 
+
+        parameter_paf = [pathlib.Path(r"testdata\inputfiles\configuration_3a.xlsx")]
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(parameter_paf, static_parameters = True, dynamic_parameters = True, verbose = self.verbose)
+
+        test_string = "GPImportData.merge_measurement_static_dynamic_df(): df can not be None."
+
+        with self.assertRaises(ValueError) as cm:
+            with patch('sys.stdout', new_callable = StringIO) as mock_stdout:
+                df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = self.verbose)
+        
+            self.assertTrue(mock_stdout.getvalue() == test_string)        
+        
         
 if __name__ == '__main__': 
     verbosity = 1
@@ -236,6 +292,10 @@ if __name__ == '__main__':
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)     
         
         
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_measurement_data )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)   
+
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_measurement_data )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)            
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_merge_measurement_static_dynamic_df )
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)           
