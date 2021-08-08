@@ -28,11 +28,14 @@ Some are constants
 
 """
 import importlib
+import pathlib
 
 import GPFunctions as GPF
+import GPImportData as GPID
 import PythonTools.ClassTools as CT
 
 importlib.reload(GPF)
+importlib.reload(GPID)
 
 class Plume(CT.ClassTools):
     """
@@ -88,6 +91,14 @@ class Plume(CT.ClassTools):
 
         self.df = kwargs.get("df", None)
 
+        self.parameter_filename = kwargs.get("parameter_filename", None)
+        self.parameter_path = kwargs.get("parameter_path", None)
+        self.parameter_paf = GPF.handle_filename_path(filename = self.parameter_filename, path = self.parameter_path, verbose = self.verbose)
+        
+        self.measurement_filename = kwargs.get("measurement_filename", None)
+        self.measurement_path = kwargs.get("measurement_path", None)
+        self.measurement_paf = GPF.handle_filename_path(filename = self.measurement_filename, path = self.measurement_path, verbose = self.verbose)
+
         self.qs = kwargs.get("qs", None)
         self.wind_speed = kwargs.get("wind_speed", None)
         self.wind_direction = kwargs.get("wind_direction", None)
@@ -135,13 +146,21 @@ class Plume(CT.ClassTools):
 
 
 
-    
+    def import_data(self, static_parameters = True, dynamic_parameters = True, verbose = 0, **kwargs):
+        """
+        
+        """
+        verbose = GPF.print_vars(function_name = "GPPlumeModel.import_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
 
+        parameter_paf = kwargs.get("parameter_paf", self.parameter_paf)
+        measurement_paf = kwargs.get("measurement_paf", self.measurement_paf)
 
+        df_static, df_dynamic = GPID.import_measurement_parameters_excel(parameter_paf, static_parameters = static_parameters, dynamic_parameters = dynamic_parameters, verbose = verbose)
 
+        if measurement_paf is None:
+            measurement_paf = [pathlib.Path(df_static.loc[0,"measurement_data_path_and_filename"])]
 
-
-
+        df = GPID.import_measurement_data(measurement_paf, verbose = verbose)
 
 
 

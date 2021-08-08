@@ -227,19 +227,48 @@ class Test_pickling(unittest.TestCase):
         pickle_paf = self.pickle_path.joinpath(pickle_filename)
         pickle_paf.unlink()
 
+class Test_import_plume(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
         
+        # self.pickle_path = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\tempfiles")
+        
+        # if self.pickle_path.exists() == False:
+            # self.pickle_path.mkdir()        
+
+
+    def test_basic(self):
+    
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_2.xlsx")
+
+        G = GP.GaussianPlume(verbose = self.verbose)
+        G.add_parameter_files(paf)    
+        
+        print(G.plumes[0])
+        
+        G.import_plume(plume_index = 0)
+        
+        
+
+
+                
         
 if __name__ == '__main__': 
     verbosity = 1
        
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)        
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)        
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_add_parameter_files )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)        
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_add_parameter_files )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)        
 
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_pickling )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)     
+        
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_pickling )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)      
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_plume )
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)             
