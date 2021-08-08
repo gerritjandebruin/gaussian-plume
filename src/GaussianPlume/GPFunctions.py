@@ -286,7 +286,7 @@ def print_vars(function_name, function_vars, verbose, self_verbose = 0):
     return verbose
 
 
-def stability_index2class(stability_index):
+def stability_index2class(stability_index, verbose = 0):
     """
     Convert stability index (0-5) to a stability class (A-F).
     
@@ -316,7 +316,7 @@ def stability_index2class(stability_index):
 
 
 
-def stability_class2index(stability_class):
+def stability_class2index(stability_class, verbose = 0):
     """
     Convert stability class (A-F) to a stability index (0-5).
     
