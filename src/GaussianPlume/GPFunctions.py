@@ -433,6 +433,9 @@ def handle_filename_path(filename, path, verbose = 0):
     """
     verbose = print_vars(function_name = "GPFunctions.handle_filename_path()", function_vars = vars(), verbose = verbose, self_verbose = 0)
     
+    if filename is None and path is None:
+        return None
+    
     if type(filename) != list:  
         filename = [filename]
     

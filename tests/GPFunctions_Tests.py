@@ -635,7 +635,7 @@ class Test_handle_filename_path(unittest.TestCase):
             {"filename": [pathlib.Path('C:/path/filename_1.ext'), 'C:/path/filename_2.ext'], "path": None, "output": [out_x1, out_x2]},
             {"filename": [pathlib.Path('filename_1.ext'), 'filename_2.ext'], "path": 'C:/path', "output": [out_x1, out_x2]},
             {"filename": [pathlib.Path('filename_1.ext'), 'filename_2.ext'], "path": ['C:/path_1', pathlib.Path('C:/path_2')], "output": [out_11, out_22]},            
-            # {"filename": , "path": , "output": },
+            {"filename": None, "path": None, "output": None},
             # {"filename": , "path": , "output": },
             # {"filename": , "path": , "output": },
         ]
@@ -669,7 +669,7 @@ class Test_handle_filename_path(unittest.TestCase):
     def test_type_errors(self):
         
         tests = [
-            {"filename": None, "path": None},
+            # {"filename": None, "path": None},
             {"filename": 5, "path": None},        
             {"filename": "fiets", "path": 5},
             # {"filename": , "path": },
@@ -684,6 +684,7 @@ class Test_handle_filename_path(unittest.TestCase):
                 with self.assertRaises(TypeError) as cm:
                     result = GPF.handle_filename_path(filename = test["filename"], path = test["path"])
                 self.assertTrue(len(str(cm.exception)) > 0)
+
 
 
 
