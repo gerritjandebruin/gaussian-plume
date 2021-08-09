@@ -207,6 +207,10 @@ def import_measurement_parameters_excel(paf, static_parameters = True, dynamic_p
 
     if df_static is not None:
         df_static = df_static.loc[:,~df_static.columns.duplicated()]
+        lower_case_column_names(df_static)
+
+    if df_dynamic is not None:
+        lower_case_column_names(df_dynamic)
     
     return df_static, df_dynamic
     
@@ -277,6 +281,8 @@ def import_measurement_data(paf, verbose = 0):
             
     df = df.reset_index(drop = True)
     
+    lower_case_column_names(df)
+    
     return df 
     
     
@@ -323,12 +329,20 @@ def merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = 0):
         temp_df.fillna(method = "ffill", inplace = True) 
         temp_df = temp_df.astype("category")
         df = pandas.concat([df, temp_df], axis = 1)
+        
+        lower_case_column_names(df)
     
     return df
     
     
     
+def lower_case_column_names(df):
 
+    old_col_names = df.columns
+    new_col_names = []
+    for old_name in old_col_names:
+        new_col_names.append(old_name.lower())
+    df.columns = new_col_names
 
     
     

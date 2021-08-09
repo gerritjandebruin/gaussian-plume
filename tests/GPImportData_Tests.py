@@ -236,6 +236,7 @@ class Test_merge_measurement_static_dynamic_df(unittest.TestCase):
 
         df = GPID.merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = self.verbose)
         self.assertTrue(df.shape == (1715,12))
+
         
     def test_dynamic_is_None(self):
     
@@ -274,6 +275,20 @@ class Test_merge_measurement_static_dynamic_df(unittest.TestCase):
         
             self.assertTrue(mock_stdout.getvalue() == test_string)        
         
+
+class Test_lower_case_column_names(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+        
+    def test_basic(self):
+        
+        d = {'COL1': [1, 2], 'col2': [3, 4]}
+        df = pandas.DataFrame(data = d)
+        GPID.lower_case_column_names(df)
+        print(df.columns)
+
+
         
 if __name__ == '__main__': 
     verbosity = 1
@@ -296,6 +311,10 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_measurement_data )
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)   
 
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_merge_measurement_static_dynamic_df )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)   
+
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_merge_measurement_static_dynamic_df )
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_lower_case_column_names )
         unittest.TextTestRunner(verbosity=verbosity).run(suite)           
