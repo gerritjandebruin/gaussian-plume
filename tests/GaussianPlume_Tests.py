@@ -231,27 +231,36 @@ class Test_import_plume(unittest.TestCase):
 
     def setUp(self):
         self.verbose = 1
-        
-        # self.pickle_path = pathlib.Path(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\tempfiles")
-        
-        # if self.pickle_path.exists() == False:
-            # self.pickle_path.mkdir()        
 
 
     def test_basic(self):
-    
+        """
+        Import measurement data and static and dynamic parameters. Should be 22 columns.
+        """
         paf = pathlib.Path(r"testdata\inputfiles\configuration_2.xlsx")
 
         G = GP.GaussianPlume(verbose = self.verbose)
         G.add_parameter_files(paf)    
         
-        print(G.plumes[0])
-        
         G.import_plume(plume_index = 0)
-        
-        
+
+        self.assertTrue(G.plumes[0].df.shape == (1715, 22))
 
 
+    def test_no_dynamic_parameters(self):
+        """
+        Import measurement data and static parameters, but not dynamic parameters. Should be 20 columns.
+        """    
+        paf = pathlib.Path(r"testdata\inputfiles\configuration_2.xlsx")
+
+        G = GP.GaussianPlume(verbose = self.verbose)
+        G.add_parameter_files(paf)    
+        
+        G.import_plume(plume_index = 0, dynamic_parameters = False)
+
+        self.assertTrue(G.plumes[0].df.shape == (1715, 20))
+        self.assertTrue(numpy.all(G.plumes[0].molecules == ['no', 'no2']))
+        
                 
         
 if __name__ == '__main__': 
