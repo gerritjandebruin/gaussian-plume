@@ -6,6 +6,7 @@ from unittest.mock import patch
 import warnings
 import logging
 import pathlib
+import pandas
 
 import GPFunctions as GPF
 import GPConstants as GPC
@@ -411,6 +412,20 @@ class Test_small_functions(unittest.TestCase):
                 self.assertTrue(numpy.allclose(test["Tc_expected"], Tc))
 
 
+    def test_calculate_Tc_pandas(self):
+        
+        dx = numpy.arange(5) * 10 
+        wind_speed = numpy.arange(5) + 1
+        df = pandas.DataFrame(data = {"dx": dx, "wind_speed": wind_speed})
+
+        Tc = GPF.calculate_Tc(df["dx"], df["wind_speed"], verbose = self.verbose).to_numpy()
+        
+        test = numpy.array([0., 0.00138889, 0.00185185, 0.00208333, 0.00222222])
+
+        self.assertTrue(numpy.allclose(test, Tc))
+        
+
+
 
 class Test_stability_conversion(unittest.TestCase):
 
@@ -709,9 +724,9 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    # if 1:
-        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
-        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_stability_conversion)
@@ -729,6 +744,6 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_print_vars )
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_handle_filename_path)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)               
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_handle_filename_path)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)               
