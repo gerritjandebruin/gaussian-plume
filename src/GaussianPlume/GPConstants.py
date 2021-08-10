@@ -49,6 +49,8 @@ def dispersion_constants(mode):
         raise IndexError("Mode {:s} is invalid for dispersion_constants. Valid options are: 'farm', 'nogepa', 'sea'.".format(mode))
         
     return dispersion
+
+implemented_molecules = ["ch4", "n2o", "no2", "no", "c2h6"]
         
 def molecule_properties(molecule):
     """
@@ -75,15 +77,39 @@ def molecule_properties(molecule):
     elif molecule in ["n2o", "nitrous oxide"]:
         return {
             "formula": "N2O",
-            "name": "nitrous axide",
+            "name": "nitrous oxide",
             "molecular_mass": 44,
         }        
+    elif molecule in ["no2", "nitrogen dioxide"]:
+        return {
+            "formula": "NO2",
+            "name": "nitrogen dioxide",
+            "molecular_mass": 46,
+        }        
+    elif molecule in ["no", "nitrogen oxide"]:
+        return {
+            "formula": "NO",
+            "name": "nitrogen oxide",
+            "molecular_mass": 30,
+        }                
+    # elif molecule in ["nox", "ethane"]:
+        # return {
+            # "formula": "C2H6",
+            # "name": "ethane",
+            # "molecular_mass": 30,
+        # }  
     elif molecule in ["c2h6", "ethane"]:
         return {
             "formula": "C2H6",
             "name": "ethane",
             "molecular_mass": 30,
         }  
+    # elif molecule in ["PM10"]:
+        # return {
+            # "formula": "PM10",
+            # "name": "PM10",
+            # "molecular_mass": 30,
+        # }          
     else:
         warnings.warn("Molecule is not implemented")
         return None
