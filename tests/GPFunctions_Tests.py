@@ -158,8 +158,8 @@ class Test_latlon2dlatdlon(unittest.TestCase):
         dlat_expected = numpy.array([221847,0,221847,0])
         dlon_expected = numpy.array([0,137042,0,137042])
     
-        latlon2dxdy_lat_conversion_factor = 6378137
-        latlon2dxdy_lon_conversion_factor = 6356752
+        latlon2dxdy_lat_conversion_factor = 6356752
+        latlon2dxdy_lon_conversion_factor = 6378137
         
         dlat, dlon = GPF.latlon2dlatdlon(lat, lon, latR, lonR, verbose = self.verbose, latlon2dxdy_lon_conversion_factor = latlon2dxdy_lon_conversion_factor, latlon2dxdy_lat_conversion_factor = latlon2dxdy_lat_conversion_factor)
 
@@ -708,9 +708,9 @@ class Test_handle_filename_path(unittest.TestCase):
 if __name__ == '__main__': 
     verbosity = 1
     
-    # if 1:
-        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
-        # unittest.TextTestRunner(verbosity=verbosity).run(suite)      
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_latlon2dlatdlon)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)      
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_dlatdlon2dxdy)
@@ -724,9 +724,9 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)  
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_small_functions)
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)  
 
     # if 1:
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_stability_conversion)
