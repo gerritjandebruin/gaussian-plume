@@ -1,5 +1,8 @@
 import importlib
 import pathlib
+
+import warnings
+
 import numpy
 
 
@@ -53,8 +56,8 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
     if type(lonR) == list:
         lonR = numpy.array(lonR)        
     
-    dlat = numpy.sin((lat - latR) * GPC.deg2rad) * latlon2dxdy_lon_conversion_factor
-    dlon = numpy.cos(lat * GPC.deg2rad) * numpy.sin((lon - lonR) * GPC.deg2rad) * latlon2dxdy_lat_conversion_factor 
+    dlat = numpy.sin((lat - latR) * GPC.deg2rad) * latlon2dxdy_lat_conversion_factor
+    dlon = numpy.cos(lat * GPC.deg2rad) * numpy.sin((lon - lonR) * GPC.deg2rad) * latlon2dxdy_lon_conversion_factor 
     
     return dlat, dlon 
 
@@ -165,7 +168,7 @@ def calculate_Tc(dx, wind_speed, verbose = 0):
     return dx / (3600 * wind_speed)
 
 
-def calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = 0, **kwargs):
+def calculate_sigma(dx, z0, Tc, dispersion_constants, stability, offset_sigma_z = 0, verbose = 0, **kwargs):
     """
     Calculate the plume width and height at dx. 
     
@@ -196,11 +199,14 @@ def calculate_sigma(dx, z0, Tc, dispersion_constants, stability, verbose = 0, **
     """
     verbose = print_vars(function_name = "GPFunctions.calculate_sigma()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
+    if numpy.any(dx < 0):
+        raise ValueError("GPFunctions.calculate_sigma(): one or more values in dx are negative, which is not allowed.")
+    
     ca = kwargs.get("ca", GPC.sigma_ca)
     cb = kwargs.get("cb", GPC.sigma_cb)
     
     sigma_y = dispersion_constants[stability,0] * dx**dispersion_constants[stability,1] * z0**0.2 * Tc**0.35
-    sigma_z = dispersion_constants[stability,2] * dx**dispersion_constants[stability,3] * (10*z0)**(ca * dx**cb)
+    sigma_z = dispersion_constants[stability,2] * dx**dispersion_constants[stability,3] * (10*z0)**(ca * dx**cb) + offset_sigma_z
     
     return sigma_y, sigma_z
 
