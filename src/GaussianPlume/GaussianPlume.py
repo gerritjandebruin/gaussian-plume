@@ -8,19 +8,35 @@ import importlib
 import pickle
 import pathlib
 
+import numpy
+
 import PythonTools.ClassTools as CT
 import GPFunctions as GPF
 import GPPlumeModel as GPPM
 import GPImportData as GPID
+import GPLocationGeometry as GPLG
 
 importlib.reload(GPF)
 importlib.reload(GPPM)
 importlib.reload(GPID)
+importlib.reload(GPLG)
 
 
 class GaussianPlume(CT.ClassTools):
     """
     
+    
+    Attributes
+    ----------
+    plumes : list 
+        List with plumes
+    sources : list
+        List with sources
+    molecules : list
+        List with molecules
+    channels : list
+        List with measurement channels
+        
     
     """
 
@@ -33,9 +49,12 @@ class GaussianPlume(CT.ClassTools):
         """
         self.verbose = verbose
         
-        GPF.print_vars(function_name = "GaussianPlume.GaussianPlume.__init__()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
+        verbose = GPF.print_vars(function_name = "GaussianPlume.GaussianPlume.__init__()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
 
         self.plumes = []
+        self.sources = []
+        self.channels = []
+        self.molecules = []
         
         
     def add_parameter_files(self, filename, path = None, verbose = 0):
@@ -217,6 +236,153 @@ class GaussianPlume(CT.ClassTools):
 
 
     
+    def calculate_plume(self, verbose = 0, **kwargs):
+        """
+        
+        """
+        
+        verbose = GPF.print_vars(function_name = "GaussianPlume.calculate_plume.__init__()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)    
+        
+        
+        results = []
+        
+        logs = []
+        
+        print()
+        for plume_index, plume in enumerate(self.plumes):
+        
+            print("plume_index: {:d}".format(plume_index))
+            
+            for channel_index, channel in enumerate(self.channels):
+                
+                print("  channel_index: {:d} - {:4s} {:s}".format(channel_index, channel.molecule, channel.device_name))
+                
+                for molecule_index, molecule in enumerate(self.molecules):
+                    
+                    print("    molecule_index: {:d} - {:s}".format(molecule_index, molecule.name))
+                    
+                    total_concentration = 0 
+                    
+                    for source_index, source in enumerate(self.sources):
+                        
+                        if channel.molecule in molecule.aliases and source.molecules in molecule.aliases:
+                            
+                            log = {
+                                "index p/c/m/s": "{:d}/{:d}/{:d}/{:d}".format(plume_index, channel_index, molecule_index,source_index),
+                                "plume": plume_index,
+                                "channel identifier": channel.channel_identifier,
+                                "molecule name": molecule.name,
+                                "source identifier": source.source_identifier,
+                                # "molecule": channel.molecule,
+                            }
+                                
+                            
+                            self.locM = GPLG.Location(plume.df.loc[:,"latM"].to_numpy(), plume.df.loc[:,"lonM"].to_numpy(), verbose = self.verbose)
+                            if type(self.locM.lat) in (list, numpy.ndarray):
+                                log["locM [0] (lat, lon)"] = (self.locM.lat[0], self.locM.lon[0])
+                            else:
+                                log["locM (lat, lon)"] = (self.locM.lat, self.locM.lon)
+                            
+                            if type(source.locS.lat) in (list, numpy.ndarray):
+                                log["locS [0] (lat, lon)"] = (source.locS.lat[0], source.locS.lon[0])
+                            else:
+                                log["locS (lat, lon)"] = (source.locS.lat, source.locS.lon)
+                            
+                            dlatS, dlonS = GPF.latlon2dlatdlon(source.locS.lat, source.locS.lon, source.locR.lat, source.locR.lon, verbose = verbose)
+
+                            if type(dlatS) in (list, numpy.ndarray):
+                                log["dlatS [0]"] = dlatS[0]
+                                log["dlonS [0]"] = dlonS[0]
+                            else:
+                                log["dlatS"] = dlatS
+                                log["dlonS"] = dlonS
+
+                            
+                            log["locR (lat, lon)"] = (self.locR.lat, self.locR.lon)
+                            
+                            dlatM, dlonM = GPF.latlon2dlatdlon(self.locM.lat, self.locM.lon, self.locR.lat, self.locR.lon, verbose = verbose)
+
+                            if type(dlatM)  in (list, numpy.ndarray):
+                                log["dlatM [0]"] = dlatM[0]
+                                log["dlonM [0]"] = dlonM[0]
+                            else:
+                                log["dlatM"] = dlatM
+                                log["dlonM"] = dlonM
+                
+                            dx, dy = GPF.dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction = plume.df.loc[:,"wind_direction"].to_numpy(), verbose = verbose)
+
+                            if type(dx)  in (list, numpy.ndarray):
+                                log["dx [0]"] = dx[0]
+                                log["dy [0]"] = dy[0]
+                                log["dx <>"] = numpy.mean(dx)
+                                log["dy <>"] = numpy.mean(dy)
+                            else:
+                                log["dx"] = dx
+                                log["dy"] = dy
+                            
+                            # tc = GPF.calculate_Tc(dx, plume.df.loc[:,"wind_speed"], verbose = verbose)
+                            tc = 0.05
+                            dispersion_constants = GPF.get_dispersion_constants(mode = "farm", verbose = verbose)
+            
+                            sigma_y, sigma_z = GPF.calculate_sigma(
+                                dx = dx, 
+                                z0 = source.z0, 
+                                Tc = tc, 
+                                dispersion_constants = dispersion_constants, 
+                                stability = 1, 
+                                offset_sigma_z = source.offset_sigma_z, 
+                                verbose = verbose
+                            )
+            
+                            concentration = GPF.calculate_concentration(
+                                Qs = source.qs, 
+                                wind_speed = plume.df.loc[:,"wind_speed"].to_numpy(), 
+                                sigma_y = sigma_y, 
+                                sigma_z = sigma_z, 
+                                dy = dy, 
+                                Zr = plume.df.loc[:,"zr"].to_numpy(), 
+                                Hs = source.hs, 
+                                Hm = plume.df.loc[:,"hm"].to_numpy(), 
+                                molecular_mass = molecule.molecular_mass, 
+                                verbose = verbose
+                            )
+                            
+                            concentration = numpy.sum(concentration)
+            
+                            print("          source {:d}: sigma Y: {:4.2f}, Z: {:4.2f}, concentration: {:6.2f}, dx: {:5.1f}, dy: {:5.1f}".format(source_index, numpy.mean(sigma_y), numpy.mean(sigma_z), concentration, numpy.mean(dx), numpy.mean(dy)))
+            
+                            # print("        concentration: {:6.2f} ppb".format(concentration))
+                            
+                            total_concentration += concentration
+                            
+                            logs.append(log)
+                        # else:
+                            # print("        --")
+                            
+                    print("    total: {:6.2f}".format(total_concentration))
+        
+        for log in logs:
+            for k, v in log.items():
+                print("{:20} : {:}".format(k,v))
+            print()
+                
+            # print(log)
+        
+        # print(logs)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
 
