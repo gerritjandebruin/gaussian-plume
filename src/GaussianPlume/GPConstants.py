@@ -70,24 +70,28 @@ def molecule_properties(molecule):
 
     if molecule in ["methane", "ch4"]:
         return {
+            "aliases": ["methane", "ch4"],
             "formula": "CH4",
             "name": "methane",
             "molecular_mass": 16,
         }
     elif molecule in ["n2o", "nitrous oxide"]:
         return {
+            "aliases": ["n2o", "nitrous oxide"],
             "formula": "N2O",
             "name": "nitrous oxide",
             "molecular_mass": 44,
         }        
     elif molecule in ["no2", "nitrogen dioxide"]:
         return {
+            "aliases": ["no2", "nitrogen dioxide"],
             "formula": "NO2",
             "name": "nitrogen dioxide",
             "molecular_mass": 46,
         }        
     elif molecule in ["no", "nitrogen oxide"]:
         return {
+            "aliases": ["no", "nitrogen oxide"],
             "formula": "NO",
             "name": "nitrogen oxide",
             "molecular_mass": 30,
@@ -100,6 +104,7 @@ def molecule_properties(molecule):
         # }  
     elif molecule in ["c2h6", "ethane"]:
         return {
+            "aliases": ["c2h6", "ethane"],
             "formula": "C2H6",
             "name": "ethane",
             "molecular_mass": 30,
