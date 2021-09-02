@@ -1,20 +1,60 @@
 """
 To calculate the concentration, the following input is required:
 
+Source parameters
+-----------------
+* `source_number` : the number given to the source. 
+* Position:
+
+    * `latS` : Latitude of the source
+    * `lonS` : Longitude of the source
+    * `dlatS` : Distance of source north of reference, in meters
+    * `dlonS` : Distance of source east of reference, in meters
+    * When using `latS` and `lonS`, also give `latR` and `lonR`. `dlatS` and `dlonS` can be used when the relative position was already calculated elsewhere. 
+
 * `Qs`: Source strength in gram / second
+* `z0`: Roughness height in meters
+* `Hs`: Height of the source in meters
+* `offset_sig_z`: Width of the source, in meters
+
+Channel parameters
+------------------
+* `channel_number` : the number given to the channel. 
+* `molecule` : the molecule in question
+* 'molecular_mass`: Molecular mass in g/mol.
+* `channel_delay` : delay due to the instrument 
+* `instrument` : label for the instrument used. 
+
+Measurement parameters
+----------------------
+* Position:
+
+    * `dlatM` : Distance of measurement north of reference, in meters
+    * `dlonM` : Distance of measurement east of reference, in meters
+    * `latM` : Latitude of the measurement
+    * `lonM` : Longitude of the measurement
+    * See the note for position of the source.
+
+* `Zr`: Height of the measurement in meters
 * `wind_speed`: Wind speed in m/s.
+* `wind_direction`: Wind direction in degrees
+* `Hm`: Height of the mixing layer in meters 
+* Stability:
+
+    * `stability_index`: Index 0-5 for stability, where 0 is most stable.
+    * `stability_class`: Stability class, from A to F, where A is most stable.
+    * Stability can be entered as a string (A-F) or as an index. The program uses the index and will convert the class to the appropriate index.
+
+Static parameters
+-----------------
+* `latR` : Latitude of the reference
+* `lonR` : Longitude of the refernce
+* `mode`: select dispersion constants (NOGEPA / farm)
+
+Intermediate parameters
+-----------------------
 * `dx`: Distance between the source and the measurement in meters. 
 * `dy`: Perpendicular distance between source and measurement in meters
-* `z0`: Source height in meters
-* `Zr`: Height of the measurement in meters
-* `Hs`: Height of the source in meters
-* `Hm`: Height of the mixing layer in meters 
-* `mode`: select dispersion constants (NOGEPA / farm)
-* `stability`: Index 0-5 for stability, where 0 is most stable.
-* 'molecular_mass`: Molecular mass in g/mol.
-
-Intermediate calculations are done:
-
 * `sigma_y`: Plume width in meters, calculated from dx, z0, Tc, ca, cb, dispersion_constants, stability
 * `sigma_z`: Plume height in meters, calculated from dx, z0, Tc, ca, cb, dispersion_constants, stability
 * `Tc`: Travel time between source and measurement in seconds, calculated using dx and wind_speed. 
@@ -95,41 +135,57 @@ class Plume(CT.ClassTools):
         
         GPF.print_vars(function_name = "GPPlume.Plume.__init__()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
 
+        self.plume_identifier = kwargs.get("plume_identifier", None)
+
         self.df = kwargs.get("df", None)
-
-        self.parameter_filename = kwargs.get("parameter_filename", None)
-        self.parameter_path = kwargs.get("parameter_path", None)
-        self.parameter_paf = GPF.handle_filename_path(filename = self.parameter_filename, path = self.parameter_path, verbose = self.verbose)
         
-        self.measurement_filename = kwargs.get("measurement_filename", None)
-        self.measurement_path = kwargs.get("measurement_path", None)
-        self.measurement_paf = GPF.handle_filename_path(filename = self.measurement_filename, path = self.measurement_path, verbose = self.verbose)
+        self.channel = kwargs.get("channel", None)
+        self.molecule = kwargs.get("molecule", None)
+        self.sources = kwargs.get("sources", None)
+        self.static_parameters = kwargs.get("static_parameters", None)
 
-        self.dispersion_constants = kwargs.get("dispersion_constants", None)
-
-        self.molecules = kwargs.get("molecules", None)
-        self.molecular_properties = kwargs.get("molecules_properties", None)
-        self.molecular_mass = kwargs.get("molecular_mass", None)
-        self.mode = kwargs.get("mode", None)
         
-        # self.qs = kwargs.get("qs", None)
-        # self.wind_speed = kwargs.get("wind_speed", None)
-        # self.wind_direction = kwargs.get("wind_direction", None)
-        # self.latS = kwargs.get("latS", None)
-        # self.lonS = kwargs.get("lonS", None)
-        # self.latM = kwargs.get("latM", None)
-        # self.lonM = kwargs.get("lonM", None)
-        # self.dx = kwargs.get("dx", None)
-        # self.dy = kwargs.get("dy", None)
-        # self.z0 = kwargs.get("z0", None)
-        # self.zr = kwargs.get("zr", None)
-        # self.hs = kwargs.get("hs", None)
-        # self.hm = kwargs.get("hm", None)
+
+        self.locS = kwargs.get("locS", None)
+        self.locM = kwargs.get("locM", None)
+        self.locR = kwargs.get("locR", None)   
+
+        self.dx = kwargs.get("dx", None)
+        self.dy = kwargs.get("dy", None)
+        
+        self.qs = kwargs.get("qs", None)
+        self.wind_speed = kwargs.get("wind_speed", None)
+        self.wind_direction = kwargs.get("wind_direction", None)
+
+        self.z0 = kwargs.get("z0", None)
+        self.zr = kwargs.get("zr", None)
+        self.hs = kwargs.get("hs", None)
+        self.hm = kwargs.get("hm", None)
 
         if "stability_index" in kwargs:
             self.stability_index = kwargs["stability_index"]
         elif "stability_class" in kwargs:
             self.stability_class = kwargs["stability_class"]
+
+        if self.df is not None and self.channel is not None and self.molecule is not None and self.sources is not None:
+            self.parse_data()
+
+        # self.parameter_filename = kwargs.get("parameter_filename", None)
+        # self.parameter_path = kwargs.get("parameter_path", None)
+        # self.parameter_paf = GPF.handle_filename_path(filename = self.parameter_filename, path = self.parameter_path, verbose = self.verbose)
+        
+        # self.measurement_filename = kwargs.get("measurement_filename", None)
+        # self.measurement_path = kwargs.get("measurement_path", None)
+        # self.measurement_paf = GPF.handle_filename_path(filename = self.measurement_filename, path = self.measurement_path, verbose = self.verbose)
+
+        # self.dispersion_constants = kwargs.get("dispersion_constants", None)
+
+        # self.molecules = kwargs.get("molecules", None)
+        # self.molecular_properties = kwargs.get("molecules_properties", None)
+        # self.molecular_mass = kwargs.get("molecular_mass", None)
+        # self.mode = kwargs.get("mode", None)
+        
+
 
     @property
     def stability_index(self):
@@ -155,6 +211,93 @@ class Plume(CT.ClassTools):
         self._stability_class = value
         self._stability_index = GPF.stability_class2index(value) 
     
+    def parse_data(self, verbose = 0, **kwargs):
+        """
+
+        
+        Arguments
+        ---------
+
+        
+        Notes
+        -----
+
+        
+        
+        
+        """
+        verbose = GPF.print_vars(function_name = "GPPlumeModel.parse_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
+
+
+
+
+
+    def parse_data_location_helper(self, verbose = 0, **kwargs):
+        """
+        
+        
+        Arguments
+        ---------
+
+        
+        Notes
+        -----
+        Logic:
+        
+        - If `dx` and `dy` are known, use these. 
+        - Otherwise:
+        
+            - For locR:
+            
+                1. See if locR is already set (during init)
+                2. Look in `static_parameters`
+                
+            - For locM:
+                
+                1. See if locM is already set (during init)
+                2. Look in the measurement data (`df`)
+                3. Look in `static_parameters`
+                
+            - For locS:
+                
+                1. See if source.locS is already set (during init)
+                2. Look in `static_parameters` for locSX, where X is the `source_identifier`
+                2. Look in `static_parameters` for locSX, where X is the `source_identifier`
+                3. Look in the measurement data (`df`)
+                
+        
+        
+        """
+        verbose = GPF.print_vars(function_name = "GPPlumeModel.parse_data_location_helper()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
+        
+        if self.dx is None or self.dy is None:
+            
+            if self.locR is None:
+                if self.static_parameters is not None and "locR" is in self.static_parameters:
+                    self.locR = self.static_parameters["locR"]
+                else:
+                    warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locR")
+
+            if self.locM is None:
+                if self.df is not None and "locM" is in self.df:
+                    self.locM = self.df.iloc[:, "locM"].to_numpy()                
+                elif self.static_parameters is not None and "locR" is in self.static_parameters:
+                    self.locR = self.static_parameters["locR"]
+                else:
+                    warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locM")
+
+            for source_index, source in enumerate(self.sources):
+                if source.locS is None:
+                    locS_label = "locS{:}".format(source.source_identifier)
+                    if self.static_parameters is not None and locS_label is in self.static_parameters:
+                        self.locS = self.static_parameters[locS_label]            
+                    if self.static_parameters is not None and "locS" is in self.static_parameters:
+                        self.locS = self.static_parameters["locS"]            
+                    if self.df is not None and "locM" is in self.df:
+                        self.locM = self.df.iloc[:, "locM"].to_numpy()                
+
+                    else:
+                        warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locS")
 
 
 
