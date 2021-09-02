@@ -10,8 +10,6 @@ import warnings
 import GaussianPlume as GP
 
 
-importlib.reload(GP)
-
 
 
 
@@ -261,6 +259,12 @@ class Test_import_plume(unittest.TestCase):
         self.assertTrue(G.plumes[0].df.shape == (1715, 20))
         self.assertTrue(numpy.all(G.plumes[0].molecules == ['no', 'no2']))
         
+
+
+
+
+
+
                 
         
 if __name__ == '__main__': 
@@ -278,6 +282,8 @@ if __name__ == '__main__':
         # suite = unittest.TestLoader().loadTestsFromTestCase( Test_pickling )
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)     
         
-    if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_plume )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)             
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_import_plume )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)             
+
+                 
