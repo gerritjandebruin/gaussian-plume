@@ -11,9 +11,13 @@ import warnings
 
 import GPImportData as GPID
 import GPPlumeModel as GPPM
+import GPLocationGeometry as GPLG
+import GPSource as GPSO
 
 importlib.reload(GPID)
 importlib.reload(GPPM)
+importlib.reload(GPLG)
+importlib.reload(GPSO)
 
 
 
@@ -213,6 +217,139 @@ class Test_calculate_concentration_prepare(unittest.TestCase):
         P.calculate_concentration_get_molecular_properties()
         self.assertTrue(numpy.allclose(P.molecular_mass, molecular_mass))        
         self.assertIsNotNone(P.molecular_properties)
+
+
+class Test_parse_location_data(unittest.TestCase):
+
+    def setUp(self):
+        self.verbose = 1
+
+    def test_basic(self):
+        
+        P = GPPM.Plume(verbose = 0)
+
+
+    def test_dx_dy_set_during_init(self):
+    
+        P = GPPM.Plume(verbose = 0, dx = 1, dy = 2)
+        log = P.parse_data_location_helper()
+
+        self.assertTrue(log['dx source'] == 'init/earlier')
+        self.assertTrue(log['dy source'] == 'init/earlier')
+
+    def test_locations_during_init(self):
+        locM = GPLG.Location(1,2)
+        locS = GPLG.Location(3,4)
+        sources = [GPSO.Source(source_identifier = 0, molecules = "ch4", locS = locS)]
+        locR = GPLG.Location(5,6)
+        
+        P = GPPM.Plume(verbose = 0, locM = locM, locR = locR, sources = sources)
+        log = P.parse_data_location_helper()
+        
+        log_test = {'dx source': 'init/earlier', 'dy source': 'init/earlier', 'locR source': 'init/earlier', 'locR (lat, lon)': (5, 6), 'locM source': 'init/earlier', 'locM (lat, lon)': (1, 2), 'locS source':'locS is None'}
+        
+        for k, v in log_test.items():
+            self.assertEqual(v, log[k])
+
+        
+    def test_locM_as_function_argument(self):
+        locM1 = GPLG.Location(21,22)
+        locM2 = GPLG.Location(1,2)
+        locS = GPLG.Location(3,4)
+        sources = [GPSO.Source(source_identifier = 0, molecules = "ch4", locS = locS)]
+        locR = GPLG.Location(5,6)
+        
+        P = GPPM.Plume(verbose = 0, locR = locR, sources = sources, locM = locM1)
+        log = P.parse_data_location_helper(locM = locM2)
+        
+        log_test = {
+            'dx source': 'init/earlier', 
+            'dy source': 'init/earlier', 
+            'locR source': 'init/earlier', 
+            'locR (lat, lon)': (5, 6), 
+            'locM source': 'function parameter', 
+            'locM (lat, lon)': (1, 2), 
+            'locS source': 'locS is None'
+        }
+
+        for k, v in log_test.items():
+            self.assertEqual(v, log[k]) 
+
+
+    def test_locM_in_static_df_lat_lon(self):
+        
+        locS = GPLG.Location(3,4)
+        sources = [GPSO.Source(source_identifier = 0, molecules = "ch4", locS = locS)]
+        locR = GPLG.Location(5,6)
+        
+        df = {  
+            "locM lat": [1],
+            "locM lon": [2],
+            "fiets": ["aap"],
+        }
+        
+        df_static = pandas.DataFrame(df)
+        
+        P = GPPM.Plume(verbose = 0, locR = locR, sources = sources)
+        P.df_static = df_static
+        log = P.parse_data_location_helper() 
+        # print(log)
+        log_test = {
+            'dx source': 'init/earlier', 
+            'dy source': 'init/earlier', 
+            'locR source': 'init/earlier', 
+            'locR (lat, lon)': (5, 6), 
+            'locM source': 'self.df_static lat/lon', 
+            'locM [0] (lat, lon)': (1, 2), 
+            'locS source': 'locS is None'
+        }
+
+        for k, v in log_test.items():
+            self.assertEqual(v, log[k])  
+
+    def test_locSX_in_static_df_lat_lon(self):
+        
+        locM = GPLG.Location(1,2)
+        sources = [GPSO.Source(source_identifier = 0, molecules = "ch4")]
+        locR = GPLG.Location(5,6)
+        
+        df = {  
+            "locS0 lat": [3],
+            "locS0 lon": [4],
+            "fiets": ["aap"],
+        }
+        
+        df_static = pandas.DataFrame(df)
+        
+        P = GPPM.Plume(verbose = 0, locR = locR, sources = sources, locM = locM)
+        P.df_static = df_static
+        log = P.parse_data_location_helper() 
+        # print(log)
+        log_test = {'dx source': 'init/earlier', 'dy source': 'init/earlier', 'locR source': 'init/earlier', 'locR (lat, lon)': (5, 6), 'locM source': 'init/earlier', 'locM (lat, lon)': (1, 2), 'locS source': 'locS is None', 'locS0 source': 'self.df_static lat/lon'}
+
+
+        for k, v in log_test.items():
+            self.assertEqual(v, log[k])  
+        
+
+    def test_locSX_from_locS(self):
+        
+        locM = GPLG.Location(1,2)
+        locS = GPLG.Location(3,4)
+        sources = [GPSO.Source(source_identifier = 0, molecules = "ch4")]
+        locR = GPLG.Location(5,6)
+
+        P = GPPM.Plume(verbose = 0, locR = locR, sources = sources, locM = locM, locS = locS)
+
+        log = P.parse_data_location_helper() 
+        # print(log)
+        log_test = {'dx source': 'init/earlier', 'dy source': 'init/earlier', 'locR source': 'init/earlier', 'locR (lat, lon)': (5, 6), 'locM source': 'init/earlier', 'locM (lat, lon)': (1, 2), 'locS source': 'init/earlier', 'locS0 source': 'self.locS'}
+
+
+        for k, v in log_test.items():
+            self.assertEqual(v, log[k])          
+        
+        
         
 if __name__ == '__main__': 
     verbosity = 1
@@ -222,6 +359,11 @@ if __name__ == '__main__':
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)    
 
 
+    # if 1:
+        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration_prepare )
+        # unittest.TextTestRunner(verbosity=verbosity).run(suite)            
+
+
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration_prepare )
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)            
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_parse_location_data )
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)      

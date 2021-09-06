@@ -16,13 +16,13 @@ importlib.reload(GPCH)
 
 
 
-class Test_XXX(unittest.TestCase):
+class Test_basic(unittest.TestCase):
 
     def setUp(self):
         self.verbose = 1
         
     def test_basic(self):
-        pass
+        C = GPCH.Channel(channel_identifier = 0, molecule = "xyz", device_name = "abc")
         
   
 
@@ -32,5 +32,5 @@ if __name__ == '__main__':
     verbosity = 1
 
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_XXX )
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
         unittest.TextTestRunner(verbosity=verbosity).run(suite)           

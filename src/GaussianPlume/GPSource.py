@@ -29,8 +29,52 @@ class Source(CT.ClassTools):
         self.locS = kwargs.get("locS", None)
         self.locR = kwargs.get("locR", None)
         
+        self.dlocS = kwargs.get("dlocS", None)
+        # self.dlocM = kwargs.get("dlocM", None)
+        
         self.qs = kwargs.get("qs", None)
         self.hs = kwargs.get("hs", None)
         self.z0 = kwargs.get("z0", None)
         self.offset_sigma_z = kwargs.get("offset_sigma_z", None)
+    
+    # def calculate_distance_to_measurement(self, wind_direction, verbose = 0, **kwargs):
+        # """
         
+        
+        # """
+        # verbose = GPF.print_vars(function_name = "GPSource.Source.calculate_distance_to_measurement()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
+
+        # self.dlocS = kwargs.get("dlocS", self.dlocS)
+        # self.dlocM = kwargs.get("dlocM", self.dlocM)
+        
+        # if self.dlocS is not None and self.dlocM is not None:
+            # GPF.dlatdlon2dxdy(dlatS = self.dlocS.dlat, dlonS = self.dlocS.dlon, dlatM = self.dlocM.dlat, dlonM = self.dlocM.dlon, wind_direction, verbose = verbose)
+        
+        
+    def calculate_relative_position(self, verbose = 0, **kwargs):
+        """
+        
+        
+        """
+        verbose = GPF.print_vars(function_name = "GPSource.Source.calculate_distance_to_measurement()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
+
+        self.locS = kwargs.get("locS", None)
+        self.locR = kwargs.get("locR", None)
+
+        if self.locS is not None and self.locR is not None:
+            self.dlocS = GPLG.RelativeLocation(loc = self.locS, locR = self.locR, verbose = verbose)
+            self.dlocS.calculate_relative_location(verbose = verbose)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

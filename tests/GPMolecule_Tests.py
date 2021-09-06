@@ -9,22 +9,31 @@ import warnings
 
 
 
-import GPChannel as GPCH
+import GPMolecule as GPMO
 
-importlib.reload(GPCH)
-
-
+importlib.reload(GPMO)
 
 
-class Test_XXX(unittest.TestCase):
+
+
+class Test_basic(unittest.TestCase):
 
     def setUp(self):
         self.verbose = 1
         
     def test_basic(self):
-        pass
+        M = GPMO.Molecule("ch4")
         
-  
+    def test_invalid_molecule_name(self):
+    
+        with self.assertRaises(ValueError) as cm:
+            M = GPMO.Molecule("abc") 
+          
+        self.assertEqual(str(cm.exception), "GPMolecule.Molecule.__init__(): abc is not a valid name of a molecule.")    
+         
+        
+        
+       
 
 
         
@@ -32,5 +41,5 @@ if __name__ == '__main__':
     verbosity = 1
 
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_XXX )
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
         unittest.TextTestRunner(verbosity=verbosity).run(suite)           

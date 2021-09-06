@@ -9,28 +9,29 @@ import warnings
 
 
 
-import GPChannel as GPCH
+import GPLocationGeometry as GPLG
 
-importlib.reload(GPCH)
-
-
+importlib.reload(GPLG)
 
 
-class Test_XXX(unittest.TestCase):
+
+
+class Test_basic(unittest.TestCase):
 
     def setUp(self):
         self.verbose = 1
         
-    def test_basic(self):
-        pass
+    def test_basic_location(self):
+        L = GPLG.Location(1,2)
         
   
-
+    def test_basic_geometry(self):
+        G = GPLG.Geometry()
 
         
 if __name__ == '__main__': 
     verbosity = 1
 
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_XXX )
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
         unittest.TextTestRunner(verbosity=verbosity).run(suite)           

@@ -33,50 +33,50 @@ class Test_general_operation(unittest.TestCase):
         self.verbose = 1
 
 
-    def test_basic(self):
+    # def test_basic(self):
         
-        locR = GPLG.Location(51.5852, 5.6015)
-        locS0 = GPLG.Location(51.5775117, 5.58756835)
-        locS1 = GPLG.Location(51.5775117, 5.68756835)
-        locS2 = GPLG.Location(51.5775117, 5.78756835)
+        # locR = GPLG.Location(51.5852, 5.6015)
+        # locS0 = GPLG.Location(51.5775117, 5.58756835)
+        # locS1 = GPLG.Location(51.5775117, 5.68756835)
+        # locS2 = GPLG.Location(51.5775117, 5.78756835)
 
-        ch4 = GPM.Molecule("ch4")
-        no2 = GPM.Molecule("no2")
-        molecules = [ch4, no2]
+        # ch4 = GPM.Molecule("ch4")
+        # no2 = GPM.Molecule("no2")
+        # molecules = [ch4, no2]
         
-        source0 = GPSO.Source(0, ch4, locS = locS0, label = "wc", verbose = self.verbose)
-        source1 = GPSO.Source(1, no2, locS = locS1, label = "stal", verbose = self.verbose)
-        source2 = GPSO.Source(2, [no2, ch4], locS = locS2, label = "schuur", verbose = self.verbose)
-        sources = [source0, source1, source2]
+        # source0 = GPSO.Source(0, ch4, locS = locS0, label = "wc", verbose = self.verbose)
+        # source1 = GPSO.Source(1, no2, locS = locS1, label = "stal", verbose = self.verbose)
+        # source2 = GPSO.Source(2, [no2, ch4], locS = locS2, label = "schuur", verbose = self.verbose)
+        # sources = [source0, source1, source2]
 
-        channel0 = GPCH.Channel(0, no2, "QCL")
-        channel1 = GPCH.Channel(1, ch4, "MIRA")
-        channels = [channel0, channel1]
+        # channel0 = GPCH.Channel(0, no2, "QCL")
+        # channel1 = GPCH.Channel(1, ch4, "MIRA")
+        # channels = [channel0, channel1]
 
-        locM = numpy.loadtxt(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\locM.dat")
-        locM = GPLG.Location(locM[:,1], locM[:,0])
-        plume_number = numpy.zeros(110)
-        plume_number[30:50] = 1
-        plume_number[80:100] = 2
-        df = {
-            "channel0 ppb": numpy.arange(110)/10,
-            "channel1 ppb": numpy.arange(110)/20,
-            "wind_speed": numpy.arange(100,210),
-            "wind_direction": numpy.arange(200,310),
-            "plume_number": plume_number,
-            "locM": locM,
-        }
-        df = pandas.DataFrame(df)
+        # locM = numpy.loadtxt(r"C:\Python\GaussianPlume\tests\testdata\inputfiles\locM.dat")
+        # locM = GPLG.Location(locM[:,1], locM[:,0])
+        # plume_number = numpy.zeros(110)
+        # plume_number[30:50] = 1
+        # plume_number[80:100] = 2
+        # df = {
+            # "channel0 ppb": numpy.arange(110)/10,
+            # "channel1 ppb": numpy.arange(110)/20,
+            # "wind_speed": numpy.arange(100,210),
+            # "wind_direction": numpy.arange(200,310),
+            # "plume_number": plume_number,
+            # "locM": locM,
+        # }
+        # df = pandas.DataFrame(df)
 
-        plume0 = GPPM.Plume(df = df)
-        plumes = [plume0]
+        # plume0 = GPPM.Plume(df = df)
+        # plumes = [plume0]
         
-        G = GP.GaussianPlume()
+        # G = GP.GaussianPlume()
         
-        G.sources = sources
-        G.channels = channels
-        G.molecules = molecules
-        G.plumes = plumes
+        # G.sources = sources
+        # G.channels = channels
+        # G.molecules = molecules
+        # G.plumes = plumes
 
 
 
@@ -156,9 +156,10 @@ class Test_general_operation(unittest.TestCase):
         
         # G.locM = locM
         G.locR = locR
+        # G.add_parameter_files(paf)
         
         
-        G.calculate_plume()
+        G.calculate_plume(tc = 0.05)
         
         
         

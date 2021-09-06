@@ -9,20 +9,20 @@ import warnings
 
 
 
-import GPChannel as GPCH
+import GPSource as GPSO
 
-importlib.reload(GPCH)
-
-
+importlib.reload(GPSO)
 
 
-class Test_XXX(unittest.TestCase):
+
+
+class Test_basic(unittest.TestCase):
 
     def setUp(self):
         self.verbose = 1
         
     def test_basic(self):
-        pass
+        GPSO.Source(source_identifier = 0, molecules = "no2")
         
   
 
@@ -32,5 +32,5 @@ if __name__ == '__main__':
     verbosity = 1
 
     if 1:
-        suite = unittest.TestLoader().loadTestsFromTestCase( Test_XXX )
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_basic )
         unittest.TextTestRunner(verbosity=verbosity).run(suite)           

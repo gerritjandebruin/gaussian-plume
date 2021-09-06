@@ -69,15 +69,20 @@ Some are constants
 """
 import importlib
 import pathlib
+import warnings
+
+import numpy
 
 import GPConstants as GPC
 import GPFunctions as GPF
 import GPImportData as GPID
 import PythonTools.ClassTools as CT
+import GPLocationGeometry as GPLG
 
 importlib.reload(GPC)
 importlib.reload(GPF)
 importlib.reload(GPID)
+importlib.reload(GPLG)
 
 class Plume(CT.ClassTools):
     """
@@ -144,7 +149,7 @@ class Plume(CT.ClassTools):
         self.sources = kwargs.get("sources", None)
         self.static_parameters = kwargs.get("static_parameters", None)
 
-        
+        self.df_static = kwargs.get("df_static", None)
 
         self.locS = kwargs.get("locS", None)
         self.locM = kwargs.get("locM", None)
@@ -152,6 +157,7 @@ class Plume(CT.ClassTools):
 
         self.dx = kwargs.get("dx", None)
         self.dy = kwargs.get("dy", None)
+        self.dxdy = kwargs.get("dxdy", None)
         
         self.qs = kwargs.get("qs", None)
         self.wind_speed = kwargs.get("wind_speed", None)
@@ -222,17 +228,34 @@ class Plume(CT.ClassTools):
         Notes
         -----
 
+        - Wind_direction:
         
+            1. Function argument
+            2. Init
+            3. df
         
         
         """
         verbose = GPF.print_vars(function_name = "GPPlumeModel.parse_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
 
+        log = {}
+
+        if "wind_direction" in kwargs:
+            log["wind_direction source"] = "function parameter"
+            self.wind_direction = kwargs["wind_direction"]
+        elif self.wind_direction is not None:
+            log["wind_direction source"] = "init/earlier"
+        elif self.df is not None and "wind_direction" in self.df:
+            self.wind_direction = self.df.iloc[:, "wind_direction"].to_numpy()                
+            log["wind_direction source"] = "self.df"
+        else:
+            raise ValueError("GPPlumeModel.parse_data(): could not find a source for wind_direction")
+
+        parse_data_location_helper(self, log, verbose = verbose, **kwargs)
 
 
 
-
-    def parse_data_location_helper(self, verbose = 0, **kwargs):
+    def parse_data_location_helper(self, log = {}, verbose = 0, **kwargs):
         """
         
         
@@ -249,56 +272,171 @@ class Plume(CT.ClassTools):
         
             - For locR:
             
-                1. See if locR is already set (during init)
-                2. Look in `static_parameters`
+                1. See if locR was given in the function argument
+                2. See if locR is already set (during init)
+                3. Look in `static_parameters` for `locR` DOES NOT WORK YET
+                4. Look in `static_parameters` for `locR lat` and `locR lon`
                 
             - For locM:
                 
-                1. See if locM is already set (during init)
-                2. Look in the measurement data (`df`)
-                3. Look in `static_parameters`
+                1. See if locM was given in the function argument
+                2. See if locM is already set (during init)
+                3. Look in the measurement data (`df`)
+                4. Look in `static_parameters`
                 
             - For locS:
                 
-                1. See if source.locS is already set (during init)
-                2. Look in `static_parameters` for locSX, where X is the `source_identifier`
-                2. Look in `static_parameters` for locSX, where X is the `source_identifier`
-                3. Look in the measurement data (`df`)
+                1. See if locS was given in the function argument
+                2. See if source.locS is already set (during init)
+                3. Look in `static_parameters` for locSX, where X is the `source_identifier` DOES NOT WORK YET
+                4. Look in `static_parameters` for locSX lat and locSX lon
+                5. Look in the measurement data (`df`) for locSX DOES NOT WORK YET
+                6. Look in the measurement data (`df`) for locSX lat and locSX lon
+                7. Use logS for logSX
+
+                
                 
         
         
         """
         verbose = GPF.print_vars(function_name = "GPPlumeModel.parse_data_location_helper()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)
         
+        if "dx" in kwargs:
+            log["dx source"] = "function parameter"
+            self.dx = kwargs["dx"]
+        else:
+            log["dx source"] = "init/earlier"
+    
+        if "dy" in kwargs:
+            log["dy source"] = "function parameter"
+            self.dy = kwargs["dy"]
+        else:
+            log["dy source"] = "init/earlier"
+            
         if self.dx is None or self.dy is None:
             
+            ### loc R ###
+            if "locR" in kwargs:
+                log["locR source"] = "function parameter"
+                self.locR = kwargs["locR"]
+            else:
+                log["locR source"] = "init/earlier"                
+                
             if self.locR is None:
-                if self.static_parameters is not None and "locR" is in self.static_parameters:
-                    self.locR = self.static_parameters["locR"]
+                if self.df_static is not None and "locR" in self.df_static:
+                    self.locR = self.df_static["locR"]
+                    log["locR source"] = "self.df_static locR"
+                elif self.df_static is not None and "locR lat" in self.df_static and "locR lon" in self.df_static:
+                    locR = GPLG.Location(lat = self.df_static["locR lat"].to_numpy(), lon = self.df_static["locR lon"].to_numpy())
+                    self.locR = locR  
+                    log["locR source"] = "self.df_static lat/lon"                    
                 else:
-                    warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locR")
+                    raise ValueError("GPPlumeModel.parse_data_location_helper(): could not find a source for locR")
 
+            log["locR (lat, lon)"] = (self.locR.lat, self.locR.lon)
+
+            ### loc M ###
+            if "locM" in kwargs:
+                log["locM source"] = "function parameter"
+                self.locM = kwargs["locM"]
+            else:
+                log["locM source"] = "init/earlier"    
+                
             if self.locM is None:
-                if self.df is not None and "locM" is in self.df:
+                if self.df is not None and "locM" in self.df:
                     self.locM = self.df.iloc[:, "locM"].to_numpy()                
-                elif self.static_parameters is not None and "locR" is in self.static_parameters:
-                    self.locR = self.static_parameters["locR"]
+                    log["locM source"] = "self.df"
+                elif self.df_static is not None and "locM" in self.df_static:
+                    self.locM = self.df_static["locM"]
+                    log["locM source"] = "self.df_static"
+                elif self.df_static is not None and "locM lat" in self.df_static and "locM lon" in self.df_static:
+                    self.locM = GPLG.Location(lat = self.df_static["locM lat"].to_numpy(), lon = self.df_static["locM lon"].to_numpy())
+                    log["locM source"] = "self.df_static lat/lon"                    
                 else:
-                    warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locM")
+                    raise ValueError("GPPlumeModel.parse_data_location_helper(): could not find a source for locM")
+
+            if type(self.locM.lat) in (list, numpy.ndarray):
+                log["locM [0] (lat, lon)"] = (self.locM.lat[0], self.locM.lon[0])
+            else:
+                log["locM (lat, lon)"] = (self.locM.lat, self.locM.lon)
+
+            ### dlocM ###
+            self.dlocM = GPLG.RelativeLocation(loc = self.locM, locR = self.locR, verbose = verbose)
+            self.dlocM.calculate_relative_location(verbose = verbose)
+
+
+            ### locS ###
+            if "locS" in kwargs:
+                log["locS source"] = "function parameter"
+                self.locS = kwargs["locS"]
+            elif self.locS is None:
+                log["locS source"] = "locS is None"
+            else:
+                log["locS source"] = "init/earlier"    
+            
+            for source_index, source in enumerate(self.sources):
+            
+                locSX_label = "locS{:}".format(source.source_identifier)
+                locSX_label_lat = "locS{:} lat".format(source.source_identifier)
+                locSX_label_lon = "locS{:} lon".format(source.source_identifier)
+                locSX_label_src = "locS{:} source".format(source.source_identifier)            
+                if source.locS is not None:
+                    log[locSX_label_src] = "init/earlier"
+                else:
+
+                    if locSX_label in kwargs:
+                        log[locSX_label_src] = "function parameter"
+                        source.locS = kwargs[locSX_label]
+                    # else:
+                        # log[locSX_label_src] = "None"                        
+
+                    elif self.df_static is not None and locSX_label in self.df_static:
+                        source.locS = self.df_static[locSX_label]  
+                        log[locSX_label_src] = "self.df_static"
+                    elif self.df_static is not None and locSX_label_lat in self.df_static and locSX_label_lon in self.df_static:
+                        source.locS = GPLG.Location(lat = self.df_static[locSX_label_lat].to_numpy(), lon = self.df_static[locSX_label_lon].to_numpy())
+                        log[locSX_label_src] = "self.df_static lat/lon"   
+                    elif self.df is not None and locSX_label in self.df:
+                        source.locS = self.df[locSX_label]  
+                        log[locSX_label_src] = "self.df"                        
+                    elif self.df is not None and locSX_label_lat in self.df and locSX_label_lon in self.df:
+                        source.locS = GPLG.Location(lat = self.df[locSX_label_lat].to_numpy(), lon = self.df[locSX_label_lon].to_numpy())
+                        log[locSX_label_src] = "self.df lat/lon"   
+
+                    elif self.locS is not None:
+                        source.locS = self.locS
+                        log[locSX_label_src] = "self.locS"   
+                    else:
+                        raise ValueError("GPPlumeModel.parse_data_location_helper(): could not find a source for locS")
+
+                if type(source.locS.lat) in (list, numpy.ndarray):
+                    log["{:s} [0] (lat, lon)".format(locSX_label)] = (source.locS.lat[0], source.locS.lon[0])
+                else:
+                    log["{:s} (lat, lon)".format(locSX_label)] = (source.locS.lat, source.locS.lon)            
+            
+            
+            dlatM, dlonM = GPF.latlon2dlatdlon(self.locM.lat, self.locM.lon, self.locR.lat, self.locR.lon, verbose = verbose)
+            if type(dlatM)  in (list, numpy.ndarray):
+                log["dlatM [0]"] = dlatM[0]
+                log["dlonM [0]"] = dlonM[0]
+            else:
+                log["dlatM"] = dlatM
+                log["dlonM"] = dlonM
 
             for source_index, source in enumerate(self.sources):
-                if source.locS is None:
-                    locS_label = "locS{:}".format(source.source_identifier)
-                    if self.static_parameters is not None and locS_label is in self.static_parameters:
-                        self.locS = self.static_parameters[locS_label]            
-                    if self.static_parameters is not None and "locS" is in self.static_parameters:
-                        self.locS = self.static_parameters["locS"]            
-                    if self.df is not None and "locM" is in self.df:
-                        self.locM = self.df.iloc[:, "locM"].to_numpy()                
+                if source.locR is None:
+                    source.locR = self.locR
+            
+                if source.dlocS is None: 
+                    source.calculate_relative_position(verbose = verbose)
+            
 
-                    else:
-                        warnings.Warning("GPPlumeModel.parse_data_location_helper(): could not find a source for locS")
-
+            
+            self.dxdy = GPLG.Distance(dlocM = self.dlocM, dlocS = source.dlocS, wind_direction = self.wind_direction, verbose = verbose)
+            self.dxdy.calculate_distance(verbose = verbose)
+            
+            
+        return log
 
 
     def import_data(self, verbose = 0, **kwargs):

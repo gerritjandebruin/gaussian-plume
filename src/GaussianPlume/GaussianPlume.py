@@ -244,6 +244,9 @@ class GaussianPlume(CT.ClassTools):
         verbose = GPF.print_vars(function_name = "GaussianPlume.calculate_plume.__init__()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)    
         
         
+        tc = kwargs.get("tc", None)
+        
+        
         results = []
         
         logs = []
@@ -320,10 +323,17 @@ class GaussianPlume(CT.ClassTools):
                                 log["dx"] = dx
                                 log["dy"] = dy
                             
-                            # tc = GPF.calculate_Tc(dx, plume.df.loc[:,"wind_speed"], verbose = verbose)
-                            tc = 0.05
+                            if tc is None:
+                                tc = GPF.calculate_Tc(dx, plume.df.loc[:,"wind_speed"], verbose = verbose)
+                            
+                            if type(tc)  in (list, numpy.ndarray):
+                                log["tc [0]"] = tc[0]
+                                log["tc <>"] = numpy.mean(tc)
+                            else:
+                                log["tc"] = tc                       
+                            
                             dispersion_constants = GPF.get_dispersion_constants(mode = "farm", verbose = verbose)
-            
+                            
                             sigma_y, sigma_z = GPF.calculate_sigma(
                                 dx = dx, 
                                 z0 = source.z0, 
@@ -333,7 +343,7 @@ class GaussianPlume(CT.ClassTools):
                                 offset_sigma_z = source.offset_sigma_z, 
                                 verbose = verbose
                             )
-            
+                            
                             concentration = GPF.calculate_concentration(
                                 Qs = source.qs, 
                                 wind_speed = plume.df.loc[:,"wind_speed"].to_numpy(), 
@@ -349,8 +359,26 @@ class GaussianPlume(CT.ClassTools):
                             
                             concentration = numpy.sum(concentration)
             
-                            print("          source {:d}: sigma Y: {:4.2f}, Z: {:4.2f}, concentration: {:6.2f}, dx: {:5.1f}, dy: {:5.1f}".format(source_index, numpy.mean(sigma_y), numpy.mean(sigma_z), concentration, numpy.mean(dx), numpy.mean(dy)))
-            
+                            # print("          source {:d}: sigma Y: {:4.2f}, Z: {:4.2f}, concentration: {:6.2f}, dx: {:5.1f}, dy: {:5.1f}".format(source_index, numpy.mean(sigma_y), numpy.mean(sigma_z), concentration, numpy.mean(dx), numpy.mean(dy)))
+                            print("          source {:d}: sigma Y: {:4.2f}, Z: {:4.2f}, concentration: {:6.2f}, dx: {:5.1f}, dy: {:5.1f}".format(source_index, sigma_y[0], sigma_z[0], concentration, numpy.mean(dx), numpy.mean(dy)))    
+                            
+                            # temp_var = plume.df.loc[:,"wind_speed"].to_numpy()
+                            # print("            wind_speed: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}".format(numpy.amin(temp_var), numpy.mean(temp_var), numpy.amax(temp_var), temp_var[0], temp_var[-1]))  
+
+
+                            # temp_var = plume.df.loc[:,"channel0 ppb"].to_numpy()
+                            # print("            ch4 ppb: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}, sum {:5.2f}".format(numpy.amin(temp_var), numpy.mean(temp_var), numpy.amax(temp_var), temp_var[0], temp_var[-1], numpy.sum(temp_var)))  
+
+                            # temp_var = sigma_y
+                            # print("            sigma_y: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}".format(numpy.amin(temp_var), numpy.mean(temp_var), numpy.amax(temp_var), temp_var[0], temp_var[-1]))  
+
+                            # temp_var = sigma_z
+                            # print("            sigma_z: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}".format(numpy.amin(temp_var), numpy.mean(temp_var), numpy.amax(temp_var), temp_var[0], temp_var[-1]))       
+
+                            # temp_var = numpy.sqrt(dlatM**2 + dlonM**2)
+                            # print("            dist M-R: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}".format(numpy.amin(temp_var), numpy.mean(temp_var), numpy.amax(temp_var), temp_var[0], temp_var[-1]))   
+                            
+                            # print("            sigma_z: min {:4.2f}, mean {:4.2f}, max {:4.2f}, [0] {:4.2f}, [-1] {:4.2f}".format(numpy.amin(sigma_z), numpy.mean(sigma_z), numpy.amax(sigma_z), sigma_z[0], sigma_z[-1]))  
                             # print("        concentration: {:6.2f} ppb".format(concentration))
                             
                             total_concentration += concentration
@@ -361,10 +389,10 @@ class GaussianPlume(CT.ClassTools):
                             
                     print("    total: {:6.2f}".format(total_concentration))
         
-        for log in logs:
-            for k, v in log.items():
-                print("{:20} : {:}".format(k,v))
-            print()
+        # for log in logs:
+            # for k, v in log.items():
+                # print("{:20} : {:}".format(k,v))
+            # print()
                 
             # print(log)
         

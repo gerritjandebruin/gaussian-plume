@@ -25,6 +25,9 @@ class Molecule(CT.ClassTools):
         self.molecule = molecule
         
         props = GPF.get_molecule_properties(self.molecule, verbose)
+        if props is None:
+            raise ValueError("GPMolecule.Molecule.__init__(): {:s} is not a valid name of a molecule.".format(self.molecule))
+        
         self.aliases = props["aliases"] 
         self.formula = props["formula"]
         self.name = props["name"] 
