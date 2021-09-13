@@ -364,9 +364,12 @@ class Test_calculate_concentration(unittest.TestCase):
         
         S.calculate_concentration()
 
-        conc = S.get_concentration(plume = 4, cumulative = True, model = True, channel = 0, molecule = 0, source = None)
+        for s in range(8):
+
+            conc = S.get_concentration(plume = 4, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
+            print(conc)
         # self.assertTrue(numpy.isclose(conc,3659.03834))
-        print(conc)
+        # print(conc)
         # print(S.concentration_model[17200:17210,0,0])
         # print(S.concentration_model[17200:17210,1,0])
         # print(S.sources[0].tc)

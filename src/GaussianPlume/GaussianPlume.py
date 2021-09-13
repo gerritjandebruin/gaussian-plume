@@ -773,7 +773,10 @@ class GaussianPlume(CT.ClassTools):
                 
 
     def parse_dx_dy(self, source_index, source, verbose = 0, **kwargs):
-    
+        """
+        
+        """
+        
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_dx_dy()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
         log_label = "S{:d} dx".format(source.source_id)
@@ -1084,6 +1087,12 @@ class GaussianPlume(CT.ClassTools):
                 conc = self.concentration_measured[idx,:]
             else:
                 conc = self.concentration_measured[idx,channel_idx]
+
+        # nan = numpy.where(numpy.isnan(conc))[0]
+        # if numpy.any(nan):
+            # print("plume {:d}, molecule: {:}, source: {:}, nan: {:}x".format(plume, molecule, source, len(nan)))
+            # print(numpy.shape(conc))
+
 
         if cumulative:
             return numpy.nansum(conc)
