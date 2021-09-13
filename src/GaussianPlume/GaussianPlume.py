@@ -1,24 +1,84 @@
-import importlib
+"""
+Data processing is done in three steps:
 
+1. Import data
+2. Parse data
+3. Calculate results
+
+
+
+
+
+Import data
+===========
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+
+import importlib
+import pathlib
 import pandas
 import numpy
+
+
 import PythonTools.ClassTools as CT
 import GPFunctions as GPF
 import GPImport as GPI
 import GPSource as GPSO
 import GPChannel as GPCH
+import GPMolecule as GPMO
 
 importlib.reload(GPF)
 importlib.reload(GPI)
 importlib.reload(GPSO)
 importlib.reload(GPCH)
+importlib.reload(GPMO)
 
 class GaussianPlume(CT.ClassTools):
     """
+    
     Attributes
-    ---------
-    source : list
+    ----------
+    sources : list (optional, None)
         List with sources.
+    channels : list (optional, None)
+        List with channels.
+    molecules : list (optional, None)
+        List with molecules.
+    plumes : list (optional, None)
+        List with plumes.
+    df : pandas.DataFrame (optional, None)
+        DataFrame with the measurement data
+    df_sources : pandas.DataFrame (optional, None)
+        DataFrame with the sources
+    df_channels : pandas.DataFrame (optional, None)
+        DataFrame with the channels
+    df_static : pandas.DataFrame (optional, None)
+        DataFrame with static measurement parameters    
+    log : dict (optional)
+        A log of where values were set. If it is not given, a new one will be made.
+    comment : str (optional)
+        A comment that can be added to the log.
+    filename : Path or str (optional, None)
+        The filename where static parameters, sources, and channels are listed. 
+    path : Path or str (optional, None)
+        The path where static parameters, sources, and channels are listed. 
         
         
     
@@ -28,10 +88,33 @@ class GaussianPlume(CT.ClassTools):
     def __init__(self, verbose = 0, **kwargs):
         """
         
-        Attributes
+        Arguments
         ---------
-        
-        
+        sources : list (optional, None)
+            List with sources.
+        channels : list (optional, None)
+            List with channels.
+        molecules : list (optional, None)
+            List with molecules.
+        plumes : list (optional, None)
+            List with plumes.
+        df : pandas.DataFrame (optional, None)
+            DataFrame with the measurement data
+        df_sources : pandas.DataFrame (optional, None)
+            DataFrame with the sources
+        df_channels : pandas.DataFrame (optional, None)
+            DataFrame with the channels
+        df_static : pandas.DataFrame (optional, None)
+            DataFrame with static measurement parameters    
+        log : dict (optional)
+            A log of where values were set. If it is not given, a new one will be made.
+        comment : str (optional)
+            A comment that can be added to the log.
+        filename : Path or str (optional, None)
+            The filename where static parameters, sources, and channels are listed. 
+        path : Path or str (optional, None)
+            The path where static parameters, sources, and channels are listed. 
+
         """
         self.verbose = verbose
         
@@ -39,155 +122,108 @@ class GaussianPlume(CT.ClassTools):
 
         self.sources = kwargs.get("sources", None)
         self.channels = kwargs.get("channels", None)
-        self.molecules = kwargs.get("molecules", None)
+        self.molecules = kwargs.get("molecules", [])
         self.plumes = kwargs.get("plumes", None)
+
+        self.plume_number = None
 
         self.log = kwargs.get("log", {"comment": ""})
 
         if "comment" in kwargs:
             self.log["comment"] = "{:s}\n__init__: {:s}".format(self.log["comment"], kwargs["comment"])
-        
-        # self.wind_speed = None
-        # self.tc = None
-        # self.dispersion_mode = None
-        # self.plume_number = None
-
-        # self._stability_index = None
-        # self._stability_class = None
-
-        # if "df" in kwargs:
-            # self.df = kwargs["df"]
-        # else:
-            # self._df = None
-        
+ 
         self.df = kwargs.get("df", None)
         self.df_sources = kwargs.get("df_sources", None)
         self.df_channels = kwargs.get("df_channels", None)
         self.df_static = kwargs.get("df_static", None)
         
-        # self.wind_speed = kwargs.get("wind_speed", self.wind_speed)
-        # self.tc = kwargs.get("tc", self.tc)
-        # self.dispersion_mode = kwargs.get("dispersion_mode", self.dispersion_mode)
-        # self.plume_number = kwargs.get("plume_number", self.plume_number)
-
-        # if "stability_index" in kwargs:
-            # self.stability_index = kwargs["stability_index"]
-        # elif "stability_class" in kwargs:
-            # self.stability_class = kwargs["stability_class"]
-
-    # @property
-    # def stability_index(self):
-        # """
-        # Index of the stability class. 0 equals class A, 5 equals class F.
-        # """
-        # return self._stability_index
-
-    # @stability_index.setter
-    # def stability_index(self, value):
-        # self._stability_index = value
-        # self._stability_class = GPF.stability_index2class(value)
-
-    # @property
-    # def stability_class(self):
-        # """
-        # Stability class. Class A equals index 0, class F equals index 5. 
-        # """    
-        # return self._stability_class
-
-    # @stability_class.setter
-    # def stability_class(self, value):
-        # self._stability_class = value
-        # self._stability_index = GPF.stability_class2index(value)   
-
-    # @property
-    # def df(self):
-        # """
+        self.filename = kwargs.get("filename", None)
+        self.path = kwargs.get("path", None)
+        self.paf = GPF.handle_filename_path(filename = self.filename, path = self.path, verbose = verbose)
         
-        # """
-        # return self._df
+        self.paf_data = kwargs.get("paf_data", None)
+        
+        self.concentration_model = None
 
-    # @df.setter
-    # def df(self, value):
-        # self._df = value
-        # cn = value.columns
-        # if "wind_speed" in cn:
-            # self.wind_speed = value.loc[:,"wind_speed"].to_numpy() 
-        # if "tc" in cn:
-            # self.tc = value.loc[:,"tc"].to_numpy() 
-        # if "dispersion_mode" in cn:
-            # self.dispersion_mode = value.loc[:,"dispersion_mode"].to_numpy() 
-        # if "plume_number" in cn:
-            # self.plume_number = value.loc[:,"plume_number"].to_numpy()             
 
-        # if "stability_index" in cn:
-            # self.stability_index = value.loc[:,"stability_index"].to_numpy() 
-        # if "stability_class" in cn:
-            # self.stability_class = value.loc[:,"stability_class"].to_numpy()             
-    
-    
-    def import_static_parameters(self, sheetname = None, filename = None, path = None, verbose = 0, **kwargs):
+    def import_data(self, filename = None, path = None, verbose = 0, **kwargs):
         """
+        Import all data. 
         
+        Arguments
+        ---------
+        sheetname : str (optional, "static parameters")
+            The name of the sheet with the static parameters
+        filename : Path or str (optional, None)
+            Filename. For more information, see GPFunctions.handle_filename_path.
+        path : Path or str (optional, None)
+            Path. For more information, see GPFunctions.handle_filename_path.
+            
+        Notes
+        -----
+        If both `filename` and `path` are None (default), it will use the path-and-filename set during initialization. 
+
+        """
+        verbose = GPF.print_vars(function_name = "GaussianPlume.import_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
+
+        if filename is None and path is None:
+            paf = self.paf
+        else:
+            paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
+
+        self.import_static_parameters(verbose = verbose, **kwargs)
+        self.import_sources_from_Excel(verbose = verbose, **kwargs)
+        self.import_channels_from_Excel(verbose = verbose, **kwargs)
         
+        if str(self.paf_data.suffix) == ".csv":
+            self.import_measurement_data_from_csv(filename = self.paf_data, verbose = verbose)
+        elif str(self.paf_data.suffix) == "xlsx":
+            self.import_measurement_data_from_Excel(filename = self.paf_data, verbose = verbose)
+
+            
+    def import_static_parameters(self, sheetname = "static parameters", filename = None, path = None, verbose = 0, **kwargs):
+        """
+        Import static parameters. 
+        
+        Arguments
+        ---------
+        sheetname : str (optional, "static parameters")
+            The name of the sheet with the static parameters
+        filename : Path or str (optional, None)
+            Filename. For more information, see GPFunctions.handle_filename_path.
+        path : Path or str (optional, None)
+            Path. For more information, see GPFunctions.handle_filename_path.
+            
+        Notes
+        -----
+        If both `filename` and `path` are None (default), it will use the path-and-filename set during initialization. 
+
         """
         verbose = GPF.print_vars(function_name = "GaussianPlume.import_static_parameters()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
-        paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
-
-        if sheetname is None:
-            sheetname = "static parameters"
-
+        if filename is None and path is None:
+            paf = self.paf
+        else:
+            paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
+        
         df_static = GPI.import_df_from_Excel(paf[0], sheetname, index_col = 0, header = None)   
 
         df_static = df_static.transpose()
         df_static = df_static.reset_index(drop = True)
 
         self.df_static = df_static
-
-        # self.df_static = df_static
         
-        # cn = df_static.index
-        # if "latR" in cn:
-            # self.latR = df_static.loc["latR",1]
-        # if "lonR" in cn:
-            # self.lonR = df_static.loc["lonR",1]            
-
-        # if "latM" in cn:
-            # self.latM = df_static.loc["latM",1]
-        # if "lonM" in cn:
-            # self.lonM = df_static.loc["lonM",1]   
-            
-        # if "latS" in cn:
-            # self.latS = df_static.loc["latS",1]
-        # if "lonS" in cn:
-            # self.lonS = df_static.loc["lonS",1]               
-
-        # if "wind_speed" in cn:
-            # self.wind_speed = df_static.loc["wind_speed",1]
-        # if "tc" in cn:
-            # self.tc = df_static.loc["tc",1]
-        # if "dispersion_mode" in cn:
-            # self.dispersion_mode = df_static.loc["dispersion_mode",1]
-
-        # if "stability_index" in cn:
-            # self.stability_index = df_static.loc["stability_index",1]
-        # if "stability_class" in cn:
-            # self.stability_class = df_static.loc["stability_class",1]
-        
+        if "filename_measurement_data" in self.df_static:
+            self.paf_data = pathlib.Path(self.df_static.loc[0,"filename_measurement_data"])
     
-    def import_measurement_data_from_Excel(self, sheetname = None, filename = None, path = None, drop_non_plume = False, verbose = 0, **kwargs):
+    def import_measurement_data_from_Excel(self, sheetname = "data", filename = None, path = None, drop_non_plume = False, verbose = 0, **kwargs):
         """
         
         """
         verbose = GPF.print_vars(function_name = "GaussianPlume.import_measurement_data_from_Excel()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
-        
-        # if filename is None and path is None:
-            
+
         paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
-        
-        if sheetname is None:
-            sheetname = "data"
-        
+
         df = GPI.import_df_from_Excel(paf[0], sheetname)
     
         # if drop_non_plume:
@@ -204,11 +240,9 @@ class GaussianPlume(CT.ClassTools):
         
         """
         verbose = GPF.print_vars(function_name = "GaussianPlume.import_measurement_data_from_csv()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
-        
-        # if filename is None and path is None:
-            
+ 
         paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
-
+        
         df = GPI.import_df_from_csv(paf[0])
     
         # if drop_non_plume:
@@ -218,14 +252,32 @@ class GaussianPlume(CT.ClassTools):
         
         self.df = df
 
-    def import_sources_from_Excel(self, sheetname = None, filename = None, path = None, verbose = 0, **kwargs):
+    def import_sources_from_Excel(self, sheetname = "sources", filename = None, path = None, verbose = 0, **kwargs):
         """
+        
+        Arguments
+        ---------
+        sheetname : str (optional, "sources")
+            The name of the sheet with the static parameters
+        filename : Path or str (optional, None)
+            Filename. For more information, see GPFunctions.handle_filename_path.
+        path : Path or str (optional, None)
+            Path. For more information, see GPFunctions.handle_filename_path.
+            
+        Notes
+        -----
+        If both `filename` and `path` are None (default), it will use the path-and-filename set during initialization. 
+            
+            
         
         """
         verbose = GPF.print_vars(function_name = "GaussianPlume.import_sources_from_Excel()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
-        paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
-
+        if filename is None and path is None:
+            paf = self.paf
+        else:
+            paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
+            
         if sheetname is None:
             sheetname = "sources"
 
@@ -237,31 +289,18 @@ class GaussianPlume(CT.ClassTools):
         for i in range(n_sources):
             
             source = GPSO.Source(source_id = self.df_sources.loc[i,"source_id"], molecule = self.df_sources.loc[i,"molecule"])
-
-            # cn = source_df.columns
-            # if "latS" in cn:
-                # source.latS = source_df.loc[i,"latS"]  
-            # if "lonS" in cn:
-                # source.lonS = source_df.loc[i,"lonS"]     
-
-            # if "dlatS" in cn:
-                # source.dlatS = source_df.loc[i,"dlatS"]  
-            # if "dlonS" in cn:
-                # source.dlonS = source_df.loc[i,"dlonS"]                     
-
-            # if "qs" in cn:
-                # source.qs = source_df.loc[i,"qs"]  
-            # if "hs" in cn:
-                # source.hs = source_df.loc[i,"hs"]   
-                
-            # if "z0" in cn:
-                # source.z0 = source_df.loc[i,"z0"]  
-            # if "offset_sigma_z" in cn:
-                # source.offset_sigma_z = source_df.loc[i,"offset_sigma_z"]   
             
-            self.sources.append(source)
+            molecule_list = []
+            for molecule in self.molecules:
+                molecule_list.append(molecule.molecule_id)
+            
+            if source.molecule.molecule_id not in molecule_list:
+                self.molecules.append(GPMO.Molecule(molecule = source.molecule.molecule))
+                molecule_list.append(source.molecule.molecule_id)
+                
+            self.sources.append(source)                
 
-        # self.df_sources = df_sources
+
 
 
     def generate_sources(self, verbose = 0, **kwargs):
@@ -279,14 +318,32 @@ class GaussianPlume(CT.ClassTools):
 
 
 
-    def import_channels_from_Excel(self, sheetname = None, filename = None, path = None, verbose = 0, **kwargs):
+    def import_channels_from_Excel(self, sheetname = "channels", filename = None, path = None, verbose = 0, **kwargs):
         """
+        
+        Arguments
+        ---------
+        sheetname : str (optional, "channels")
+            The name of the sheet with the static parameters
+        filename : Path or str (optional, None)
+            Filename. For more information, see GPFunctions.handle_filename_path.
+        path : Path or str (optional, None)
+            Path. For more information, see GPFunctions.handle_filename_path.
+            
+        Notes
+        -----
+        If both `filename` and `path` are None (default), it will use the path-and-filename set during initialization. 
+            
+            
         
         """
         verbose = GPF.print_vars(function_name = "GaussianPlume.import_channels_from_Excel()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
-        paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
-
+        if filename is None and path is None:
+            paf = self.paf
+        else:
+            paf = GPF.handle_filename_path(filename = filename, path = path, verbose = verbose)
+            
         if sheetname is None:
             sheetname = "channels"
 
@@ -297,38 +354,20 @@ class GaussianPlume(CT.ClassTools):
         self.channels = []
         for i in range(n_channels):
             channel = GPCH.Channel(channel_id = df_channels.loc[i,"channel_id"], device_name = df_channels.loc[i,"device_name"], molecule = df_channels.loc[i,"molecule"])
-            
+
+            molecule_list = []
+            for molecule in self.molecules:
+                molecule_list.append(molecule.molecule_id)
+                
+            if channel.molecule.molecule_id not in molecule_list:
+                self.molecules.append(GPMO.Molecule(molecule = channel.molecule.molecule))
+                molecule_list.append(channel.molecule.molecule_id)
+                
             self.channels.append(channel)
         
         self.df_channels = df_channels
             
         
-
-    # def update_sources_from_df(self, verbose = 0, **kwargs):
-        # """
-        # """
-        # verbose = GPF.print_vars(function_name = "GaussianPlume.update_sources_from_df()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
-
-        # cn = self.df.columns
-        # for source_index, source in enumerate(self.sources):
-            # if "latM" in cn:
-                # source.latM = self.df.loc[:,"latM"].to_numpy()    
-            # if "lonM" in cn:
-                # source.lonM = self.df.loc[:,"lonM"].to_numpy()   
-            # if "wind_direction" in cn:
-                # source.wind_direction = self.df.loc[:,"wind_direction"].to_numpy()    
-            # if "wind_speed" in cn:
-                # source.wind_speed = self.df.loc[:,"wind_speed"].to_numpy()    
-            # if "stability_index" in cn:
-                # source.stability_index = self.df.loc[:,"stability_index"].to_numpy()  
-            
-            # label = "latS{:d}".format(source.source_id)
-            # if label in cn:
-                # source.latS = self.df.loc[:,label].to_numpy()   
-                
-            # label = "lonS{:d}".format(source.source_id)
-            # if label in cn:
-                # source.lonS = self.df.loc[:,label].to_numpy()            
 
     
 
@@ -339,77 +378,29 @@ class GaussianPlume(CT.ClassTools):
         """        
         verbose = GPF.print_vars(function_name = "GaussianPlume.calculate_concentration()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)    
 
-        # dispersion_constants = GPF.get_dispersion_constants(dispersion_mode = self.dispersion_mode, verbose = verbose)
-        
-        for source_index, source in enumerate(self.sources):
+        self.concentration_model = numpy.zeros((self.n_datapoints, self.n_molecules, self.n_sources))
+        self.concentration_model[:,:,:] = numpy.nan
 
-            log_label = "S{:d} dispersion_constants".format(source.source_id)
-            if source.dispersion_constants is None:
-                if source.dispersion_mode is None:
-                    raise ValueError("Please set source.dispersion_mode")
-                source.dispersion_constants = GPF.get_dispersion_constants(source.dispersion_mode, verbose = verbose)
-                self.log[log_label] = "calculated during calculate_concentration"
-            else:
-                self.log[log_label] = "set earlier"
-            
-            log_label = "S{:d} tc".format(source.source_id)
-            if source.tc is None:
-                source.tc = GPF.calculate_tc(source.dx, source.wind_speed, verbose = verbose)
-                self.log[log_label] = "calculated during calculate_concentration"
-            else:
-                self.log[log_label] = "set earlier"       
-
-            log_label = "S{:d} sigma y and z".format(source.source_id)
-            if source.sigma_y is None or source.sigma_z is None:
-                source.calculate_sigma_y_z(verbose = verbose)
-                self.log[log_label] = "calculated during calculate_concentration"
-            else:
-                self.log[log_label] = "set earlier"                
-            
-            # source.dispersion_mode = self.dispersion_mode
-            
-            # source.calculate_dxdy(verbose = verbose)
-            
-            
-        for channel_index, channel in enumerate(self.channels):
-        
-            channel.concentration_model = numpy.zeros((len(source.dx), len(self.sources)))
-            channel.plume_number = self.df.loc[:,"plume_number"].to_numpy()
-            if verbose > 2:
-                print("channel, index {:d}: {:4s} {:s}".format(channel_index, channel.molecule.name, channel.device_name))
-            
-            molecule = channel.molecule
-            # if verbose > 2:
-                # print("  molecule, index {:d}: {:s}".format(molecule_index, molecule.name))
-            
-            total_concentration = 0 
-            
+        for molecule_index, molecule in enumerate(self.molecules):
             for source_index, source in enumerate(self.sources):
-                if verbose > 2:
-                    print("    source, index {:d}: {:}".format(source_index, source.label))
-                    
-                channel.concentration_model[:,source_index] = source.calculate_concentration(verbose = verbose)
-                    
-                    
-                # print(molecule.molecular_mass)
-                # channel.concentration_model[:,source_index] = GPF.calculate_concentration(qs = source.qs, wind_speed = self.df.loc[:,"wind_speed"].to_numpy(), sigma_y = source.sigma_y, sigma_z = source.sigma_z, dy = source.dy, zr = self.df.loc[:,"zr"].to_numpy(), hs = source.hs, hm = self.df.loc[:,"hm"].to_numpy(), molecular_mass = molecule.molecular_mass, verbose = verbose)
-                
-                # for plume_index, plume in enumerate(self.plumes):
-                    # conc = channel.get_concentration_for_plume(plume, model = True, source_index = source_index, cumulative = True, verbose = verbose)
-                    # print("source: {:s}, plume: {:d}:{:6.2f}".format(source.label, plume, conc))
-
-                    # conc = channel.get_concentration_for_plume(plume, model = True, source_index = source_index, cumulative = False, verbose = verbose)
-                    # print(conc)
+                if molecule.name == source.molecule.name:
+                    conc = source.calculate_concentration(verbose = verbose)
+                    self.concentration_model[:, molecule_index, source_index] = conc
+            
+ 
                         
     def export_to_excel(self, verbose = 0, **kwargs):
         """
         
         
         """
-        n_plumes = len(self.plumes)
         
-        concentration_measured = numpy.zeros((n_plumes, len(self.channels)))
-        concentration_model = numpy.zeros((n_plumes, len(self.channels)))
+        
+        n_plumes = numpy.amax(self.plume_number) - 1 # len(self.plumes)
+        self.plumes = numpy.arange(1,n_plumes+1)
+        
+        concentration_measured = numpy.zeros((n_plumes, self.n_channels))
+        concentration_model = numpy.zeros((n_plumes, self.n_molecules))
         dist = numpy.zeros(n_plumes)
         sigma_y = numpy.zeros(n_plumes)
         sigma_z = numpy.zeros(n_plumes)
@@ -419,54 +410,44 @@ class GaussianPlume(CT.ClassTools):
         offset_sigma_z = numpy.zeros(n_plumes)
         
         s_idx = -2
-        
-        # print(self.sources[s_idx])
-        
+
+
         for plume_index, plume in enumerate(self.plumes):
             idx = numpy.where(self.plume_number == plume)[0]
             last_idx = idx[-1]
-            # print(self.sources[0].dlonM[idx])
-            # dx = numpy.mean(self.sources[-1].dx[idx])
-            # dy = numpy.mean(self.sources[-1].dy[idx])
-            # for source_index, source in enumerate(self.sources):
-                # if source.source_id == 3:
-                    # print(source.source_id)
-                    # print("dx", self.sources[source_index].dx[last_idx])
-                    # print("dy", self.sources[source_index].dy[last_idx])
-                    # print("dlatS", self.sources[source_index].dlatS)
-                    # print("dlonS", self.sources[source_index].dlonS)
-                    # # print("dlatM", self.sources[source_index].dlatM[idx])
-                    # # print("dlonM", self.sources[source_index].dlonM[idx])
-                    # print("wind_direction", self.sources[source_index].wind_direction[idx])                
-                    # print()
-            # dx = self.sources[-1].dx[idx]
-            # dy = self.sources[-1].dy[idx]
-                # print("source", source.source_id)
-                # print(source.dlatS)
-                # print(source.dlonS)
+
             dlatM = self.sources[s_idx].dlatM[idx]
             dlonM = self.sources[s_idx].dlonM[idx]   
-            # print("dx", dx)
-            # print(dx, dy)
+
             d = numpy.sqrt(dlatM**2 + dlonM**2)
-            # print(d[-1])
+
             dist[plume_index] = d[-1]
-            # print(d)
+
             
-            # print(self.sources[s_idx].sigma_y[idx])
+
             sigma_y[plume_index] = self.sources[s_idx].sigma_y[last_idx]
             sigma_z[plume_index] = self.sources[s_idx].sigma_z[last_idx]
             offset_sigma_z[plume_index] = self.sources[s_idx].offset_sigma_z
             
-            tc[plume_index] = self.sources[s_idx].tc[last_idx]
+            if type(self.sources[s_idx].tc) == numpy.ndarray:
+                tc[plume_index] = self.sources[s_idx].tc[last_idx]
+            else:
+                tc[plume_index] = self.sources[s_idx].tc
+                
             wind_speed[plume_index] = self.sources[s_idx].wind_speed[last_idx]
             wind_direction[plume_index] = self.sources[s_idx].wind_direction[last_idx]
             
-            for channel_index, channel in enumerate(self.channels):
-                label = "channel{:d} ppb".format(channel.channel_id)
-                concentration_measured[plume_index, channel_index] = numpy.sum(self.df.loc[idx, label].to_numpy())
+            for molecule_index, molecule in enumerate(self.molecules):
+                # label = "ppb {:s}".format(molecule.molecule_id)
+            
+                concentration_model[plume_index, molecule_index] = self.get_concentration(plume = plume, model = True, source = None, channel = None, molecule = molecule_index, cumulative = True, verbose = verbose, **kwargs)
                 
-                concentration_model[plume_index, channel_index] = channel.get_concentration_for_plume(plume, model = True, source_index = None, cumulative = True, verbose = verbose)
+
+            for channel_index, channel in enumerate(self.channels):
+                # label = "channel{:d} ppb".format(channel.channel_id)
+                # concentration_measured[plume_index, channel_index] = numpy.sum(self.df.loc[idx, label].to_numpy())
+                
+                concentration_measured[plume_index, channel_index] = self.get_concentration(plume = plume, model = False, source = None, channel = channel_index, molecule = None, cumulative = True, verbose = verbose, **kwargs)
 
         df = {
             "dist": dist,
@@ -478,10 +459,13 @@ class GaussianPlume(CT.ClassTools):
             "wind_direction": wind_direction,
         }
         
+        for molecule_index, molecule in enumerate(self.molecules):
+            label = "ppb {:s}".format(molecule.molecule_id)
+            df[label] = concentration_model[:, molecule_index]
+            
         for channel_index, channel in enumerate(self.channels):
-            label = "ppbC{:d} model".format(channel.channel_id)
-            df[label] = concentration_model[:, channel_index]
-            label = "ppbC{:d} measured".format(channel.channel_id)
+        
+            label = "ppb C{:d} measured".format(channel.channel_id)
             df[label] = concentration_measured[:, channel_index]
         
         
@@ -518,6 +502,14 @@ class GaussianPlume(CT.ClassTools):
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
 
         self.generate_sources(verbose = verbose, **kwargs)
+
+        self.n_datapoints = self.df.shape[0]
+        self.n_sources = len(self.sources)
+        self.n_channels = len(self.channels)
+        self.n_molecules = len(self.molecules)
+
+        self.concentration_measured = numpy.zeros((self.n_datapoints, self.n_channels))
+        
         
         for source_index, source in enumerate(self.sources):
             
@@ -533,10 +525,69 @@ class GaussianPlume(CT.ClassTools):
                 self.parse_lat_lon(source_index, source, flag_dlatS_dlonS, flag_dlatM_dlonM, verbose = verbose, **kwargs)
                 # calculate dx dy
                 if source.wind_direction is None:
-                    raise ValueError("GaussianPlume.parse_wind: No valid source for wind_direction, can't calculate distances.")
-                source.dx, source.dy = GPF.dlatdlon2dxdy(dlatS = source.dlatS, dlonS = source.dlonS, dlatM = source.dlatM, dlonM = source.dlonM, wind_direction = source.wind_direction, verbose = verbose, **kwargs)
+                    raise ValueError("GaussianPlume.parse_data: No valid source for wind_direction, can't calculate distances.")
+                source.dx, source.dy = GPF.dlatdlon2dxdy(dlatS = source.dlatS, dlonS = source.dlonS, dlatM = source.dlatM, dlonM = source.dlonM, wind_direction = source.wind_direction, warn_distance_above_meter = source.warn_distance_above_meter, verbose = verbose, **kwargs)
             
             self.parse_other_source_parameters(source_index, source, verbose = verbose, **kwargs)
+
+            log_label = "S{:d} dispersion_constants".format(source.source_id)
+            if source.dispersion_constants is None:
+                if source.dispersion_mode is None:
+                    raise ValueError("Please set source.dispersion_mode")
+                source.dispersion_constants = GPF.get_dispersion_constants(source.dispersion_mode, verbose = verbose)
+                self.log[log_label] = "calculated during parse_data"
+            else:
+                self.log[log_label] = "set earlier"
+            
+            log_label = "S{:d} tc".format(source.source_id)
+            if source.tc is None:
+                if self.df_sources is not None and "tc" in self.df_sources:
+                    source.tc = self.df_sources.loc[source_index,"tc"]
+                    self.log[log_label] = "from df_sources"
+                elif self.df_static is not None and "tc" in self.df_static:
+                    source.tc = self.df_static.loc[source_index,"tc"]
+                    self.log[log_label] = "from df_static"              
+                else:
+                    source.tc = GPF.calculate_tc(source.dx, source.wind_speed, verbose = verbose)
+                    self.log[log_label] = "calculated during parse_data"
+            else:
+                self.log[log_label] = "set earlier"       
+
+            log_label = "S{:d} sigma y and z".format(source.source_id)
+            if source.sigma_y is None or source.sigma_z is None:
+                source.calculate_sigma_y_z(verbose = verbose)
+                self.log[log_label] = "calculated during parse_data"
+            else:
+                self.log[log_label] = "set earlier"     
+
+
+        for channel_index, channel in enumerate(self.channels):
+            self.parse_channel_parameters(channel_index, channel, verbose = 0, **kwargs)
+
+        self.plume_number = self.channels[0].plume_number
+        
+            
+    def parse_channel_parameters(self, channel_index, channel, verbose = 0, **kwargs):
+    
+        verbose = GPF.print_vars(function_name = "GaussianPlume.parse_channel_parameters()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
+        
+        label = "ppb C{:d}".format(channel.channel_id)
+        self.concentration_measured[:,channel_index] = self.df.loc[:,label].to_numpy()
+                    
+        log_label = "C{:d} plume_number".format(channel.channel_id)
+        if channel.plume_number is None:
+            if self.df is not None and "plume_number" in self.df:
+                channel.plume_number = self.df.loc[:,"plume_number"].to_numpy()
+                idx = numpy.isnan(channel.plume_number)
+                channel.plume_number[idx] = 0
+                channel.plume_number = numpy.asarray(channel.plume_number, dtype = int)
+                self.log[log_label] = "from df"
+            else:
+                channel.plume_number = numpy.ones(self.n_datapoints)
+                self.log[log_label] = "set to 1 (default)"
+        else:
+            self.log[log_label] = "set earlier"         
+
 
     def parse_other_source_parameters(self, source_index, source, verbose = 0, **kwargs):
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_other_source_parameters()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
@@ -646,7 +697,7 @@ class GaussianPlume(CT.ClassTools):
                 source.stability_index = self.df.loc[:,"stability_index"].to_numpy()
                 self.log[log_label] = "from df"
             elif self.df_static is not None and "stability_index" in self.df_static:
-                source.stability_index = self.df_static.loc[source_index,"stability_index"]
+                source.stability_index = self.df_static.loc[0,"stability_index"]
                 self.log[log_label] = "from df_static"                  
             else:
                 self.log[log_label] = "not set"
@@ -661,7 +712,7 @@ class GaussianPlume(CT.ClassTools):
                 source.stability_class = self.df.loc[:,"stability_class"].to_numpy()
                 self.log[log_label] = "from df"
             elif self.df_static is not None and "stability_class" in self.df_static:
-                source.stability_class = self.df_static.loc[source_index,"stability_class"]
+                source.stability_class = self.df_static.loc[0,"stability_class"]
                 self.log[log_label] = "from df_static"                  
             else:
                 self.log[log_label] = "not set"
@@ -669,7 +720,22 @@ class GaussianPlume(CT.ClassTools):
                     print("GaussianPlume.parse_other_source_parameters: No valid source for stability_class")
         else:
             self.log[log_label] = "set earlier"
-        
+
+        log_label = "S{:d} tc_minimum".format(source.source_id)
+        if source.tc_minimum is None:
+            if self.df_sources is not None and "tc_minimum" in self.df_sources:
+                source.tc_minimum = self.df_sources.loc[source_index,"tc_minimum"]
+                self.log[log_label] = "from df_sources"
+            elif self.df_static is not None and "tc_minimum" in self.df_static:
+                source.tc_minimum = self.df_static.loc[0,"tc_minimum"]
+                self.log[log_label] = "from df_static"              
+            else:
+                source.tc_minimum = 0
+                self.log[log_label] = "set to 0 (default)"
+        else:
+            self.log[log_label] = "set earlier"   
+
+
      
 
     def parse_wind(self, source_index, source, verbose = 0, **kwargs):
@@ -708,7 +774,7 @@ class GaussianPlume(CT.ClassTools):
 
     def parse_dx_dy(self, source_index, source, verbose = 0, **kwargs):
     
-        verbose = GPF.print_vars(function_name = "GaussianPlume.parse_data_dx_dy()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
+        verbose = GPF.print_vars(function_name = "GaussianPlume.parse_dx_dy()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
         log_label = "S{:d} dx".format(source.source_id)
         if source.dx is None:
@@ -759,6 +825,15 @@ class GaussianPlume(CT.ClassTools):
         
         """        
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_dlat_dlon()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)    
+
+        log_label = "S{:d} warn_distance_above_meter".format(source.source_id)
+        if source.warn_distance_above_meter is None:
+            if self.df_sources is not None and "warn_distance_above_meter" in self.df_static:
+                source.warn_distance_above_meter = self.df_static.loc[0,"warn_distance_above_meter"]
+                self.log[log_label] = "from df_static"
+            else:
+                source.warn_distance_above_meter = 100000
+                self.log[log_label] = "set to 100000 (default)"
 
         log_label = "S{:d} dlatS".format(source.source_id)
         if source.dlatS is None:
@@ -913,12 +988,7 @@ class GaussianPlume(CT.ClassTools):
             if source.latS is None or source.lonS is None:
                 raise ValueError("GaussianPlume.parse_lat_lon(): The position of the source is unknown, can't calculate the distances.")
 
-            source.dlatS, source.dlonS = GPF.latlon2dlatdlon(lat = source.latS, lon = source.lonS, latR = source.latR, lonR = source.lonR, verbose = verbose, **kwargs)
-
-
-        # flag_latS_lonS = False
-        # if source.latS is not None and source.lonS is not None:
-            # flag_latS_lonS = True
+            source.dlatS, source.dlonS = GPF.latlon2dlatdlon(lat = source.latS, lon = source.lonS, latR = source.latR, lonR = source.lonR, warn_distance_above_meter = source.warn_distance_above_meter, verbose = verbose, **kwargs)
 
         if flag_dlatM_dlonM == False:
             log_label = "S{:d} latM".format(source.source_id)
@@ -949,7 +1019,94 @@ class GaussianPlume(CT.ClassTools):
             else:
                 self.log[log_label] = "set earlier"
 
-            source.dlatM, source.dlonM = GPF.latlon2dlatdlon(lat = source.latM, lon = source.lonM, latR = source.latR, lonR = source.lonR, verbose = verbose, **kwargs)
+            if source.latM is None or source.lonM is None:
+                raise ValueError("GaussianPlume.parse_lat_lon(): The position of the measurement is unknown, can't calculate the distances.")
+
+            source.dlatM, source.dlonM = GPF.latlon2dlatdlon(lat = source.latM, lon = source.lonM, latR = source.latR, lonR = source.lonR, warn_distance_above_meter = source.warn_distance_above_meter, verbose = verbose, **kwargs)
+
+
+
+    def get_concentration(self, plume = None, model = True, source = None, channel = None, molecule = None, cumulative = False, verbose = 0, **kwargs):
+        """
+        
+        Arguments
+        ---------
+        plume : number or list (default None)
+            The plume number(s). If None, it will return all data points.
+        model : Bool (True)
+            If True, return the data from the model. If False, return the measured data.
+        source : number (default None)
+            The number of the source. If None, return all sources. Only used for model data.
+        channel : number (default None)
+            The number of the channel. If None, return all channels. Only used for measured data.
+        molecule : number (default None)
+            The number of the molecule. If None, return all molecule. Only used for model data.  
+        cumulative : Bool (False)
+            If True, sum all data. If False, return as an array. 
+            
+        """        
+        verbose = GPF.print_vars(function_name = "GaussianPlume.get_concentration()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)    
+
+        if type(plume) in (list, numpy.ndarray):
+            idx = numpy.array([], dtype = int)
+            for p in plume:
+                _idx = numpy.where(p == self.plume_number)[0]
+                idx = numpy.concatenate((idx, _idx))
+        elif plume is None:
+            idx = numpy.arange(self.n_datapoints)
+        else:
+            idx = numpy.where(plume == self.plume_number)[0]
+        
+        if model:
+            source_idx = None 
+            if source is not None:
+                source_idx = source
+
+            molecule_idx = None 
+            if molecule is not None:
+                molecule_idx = molecule     
+      
+            if source_idx is None and molecule_idx is None:
+                conc = self.concentration_model[idx,:,:]
+            elif source_idx is None and molecule_idx is not None:
+                conc = self.concentration_model[idx,molecule_idx,:] 
+            elif source_idx is not None and molecule_idx is None:
+                conc = self.concentration_model[idx,:,source_idx]
+            else:
+                conc = self.concentration_model[idx,molecule_idx,:][:,source_idx]
+
+        else:
+            channel_idx = None
+            if channel is not None:
+                channel_idx = channel        
+            
+            if channel_idx is None:
+                conc = self.concentration_measured[idx,:]
+            else:
+                conc = self.concentration_measured[idx,channel_idx]
+
+        if cumulative:
+            return numpy.nansum(conc)
+        else:
+            return conc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-﻿datetime,wind_speed,wind_direction,zr,hs,hm,plume_number,channel0 ppb,channel1 ppb,latM,lonM,stability_index
+﻿datetime,wind_speed,wind_direction,zr,hs,hm,plume_number,ppb C0,ppb C1,latM,lonM,stability_index
 25/9/2020 07:40:00,2.4,220,3,1,500,,14.48,-0.078,51.5775117,5.58756835,2
 25/9/2020 07:40:01,2.4,220,3,1,500,,14.455,-0.1215,51.57753835,5.58763,2
 25/9/2020 07:40:02,2.4,220,3,1,500,,15.6975,-0.04725,51.57756415,5.58769665,2

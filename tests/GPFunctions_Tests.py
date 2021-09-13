@@ -576,12 +576,14 @@ class Test_get_dispersion_constants(unittest.TestCase):
 
     def test_invalid_mode(self):
     
-        test_error = "Mode fiets is invalid for dispersion_constants. Valid options are: 'farm', 'nogepa', 'sea'."
+        test_error = "Mode fiets is invalid for dispersion_mode. Valid options are: 'farm', 'nogepa', 'sea'."
     
         with self.assertRaises(IndexError) as cm:
             dc = GPF.get_dispersion_constants(dispersion_mode = "fiets", verbose = self.verbose)
+        
+        # print(cm.exception)
         self.assertTrue(str(cm.exception) == test_error)
-
+        
         
 
 class Test_print_vars(unittest.TestCase):

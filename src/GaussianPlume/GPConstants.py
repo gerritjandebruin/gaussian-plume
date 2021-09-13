@@ -72,6 +72,7 @@ def molecule_properties(molecule, invalid = "warning"):
 
     if molecule in ["methane", "ch4"]:
         return {
+            "id": "ch4",
             "aliases": ["methane", "ch4"],
             "formula": "CH4",
             "name": "methane",
@@ -79,6 +80,7 @@ def molecule_properties(molecule, invalid = "warning"):
         }
     elif molecule in ["n2o", "nitrous oxide"]:
         return {
+            "id": "n2o",
             "aliases": ["n2o", "nitrous oxide"],
             "formula": "N2O",
             "name": "nitrous oxide",
@@ -86,6 +88,7 @@ def molecule_properties(molecule, invalid = "warning"):
         }        
     elif molecule in ["no2", "nitrogen dioxide"]:
         return {
+            "id": "no2",
             "aliases": ["no2", "nitrogen dioxide"],
             "formula": "NO2",
             "name": "nitrogen dioxide",
@@ -93,6 +96,7 @@ def molecule_properties(molecule, invalid = "warning"):
         }        
     elif molecule in ["no", "nitrogen oxide"]:
         return {
+            "id": "no",
             "aliases": ["no", "nitrogen oxide"],
             "formula": "NO",
             "name": "nitrogen oxide",
@@ -106,6 +110,7 @@ def molecule_properties(molecule, invalid = "warning"):
         # }  
     elif molecule in ["c2h6", "ethane"]:
         return {
+            "id": "c2h6",
             "aliases": ["c2h6", "ethane"],
             "formula": "C2H6",
             "name": "ethane",

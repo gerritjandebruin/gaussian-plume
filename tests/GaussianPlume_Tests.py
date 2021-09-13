@@ -355,23 +355,26 @@ class Test_calculate_concentration(unittest.TestCase):
 
 
     def test_integration(self):
-        S = GP.GaussianPlume(verbose = self.verbose)
         paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
-        
-        S.import_static_parameters(filename = paf)
-        S.import_sources_from_Excel(filename = paf)
-        S.import_channels_from_Excel(filename = paf)
-        
-        paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3_data.csv"
-        S.import_measurement_data_from_csv(filename = paf)
-        
+        S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
+
+        S.import_data()
+
         S.parse_data()
-        # for source in S.sources:
-            # print(source.dispersion_mode)
-        # print(S.sources[0])
+        
         S.calculate_concentration()
-        
-        
+
+        conc = S.get_concentration(plume = 4, cumulative = True, model = True, channel = 0, molecule = 0, source = None)
+        # self.assertTrue(numpy.isclose(conc,3659.03834))
+        print(conc)
+        # print(S.concentration_model[17200:17210,0,0])
+        # print(S.concentration_model[17200:17210,1,0])
+        # print(S.sources[0].tc)
+        S.export_to_excel()
+        # print(S.plume_number[17200:])
+
+
+
 if __name__ == '__main__': 
     verbosity = 1
     

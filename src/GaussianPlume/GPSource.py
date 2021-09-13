@@ -56,6 +56,8 @@ class Source(CT.ClassTools):
         self.latM = kwargs.get("latM", None)
         self.lonM = kwargs.get("lonM", None)  
         
+        self.warn_distance_above_meter = kwargs.get("warn_distance_above_meter", None)
+        
         self.wind_direction = kwargs.get("wind_direction", None)
         self.wind_speed = kwargs.get("wind_speed", None)
         self.qs = kwargs.get("qs", None)
@@ -68,6 +70,7 @@ class Source(CT.ClassTools):
         self.dispersion_constants = kwargs.get("dispersion_constants", None)
 
         self.tc = kwargs.get("tc", None)
+        self.tc_minimum = kwargs.get("tc_minimum", None)
 
         self.sigma_y = kwargs.get("sigma_y", None)
         self.sigma_z = kwargs.get("sigma_z", None)        
@@ -80,92 +83,6 @@ class Source(CT.ClassTools):
             self.stability_class = kwargs["stability_class"]
                 
         
-        # if "df" in kwargs:
-            # self.df = kwargs["df"]
-        # else:
-            # self._df = None
-        
-        # self.dx = kwargs.get("dx", self.dx)
-        # self.dy = kwargs.get("dy", self.dy)
-        
-        # self.dlatS = kwargs.get("dlatS", self.dlatS)
-        # self.dlonS = kwargs.get("dlonS", self.dlonS)
-        # self.dlatM = kwargs.get("dlatM", self.dlatM)
-        # self.dlonM = kwargs.get("dlonM", self.dlonM)  
-        
-        
-        # self.latS = kwargs.get("latS", self.latS)
-        # self.lonS = kwargs.get("lonS", self.lonS)        
-        # self.latR = kwargs.get("latR", self.latR)
-        # self.lonR = kwargs.get("lonR", self.lonR)     
-        # self.latM = kwargs.get("latM", self.latM)
-        # self.lonM = kwargs.get("lonM", self.lonM)     
-    
-        # self.wind_direction = kwargs.get("wind_direction", self.wind_direction)
-        # self.wind_speed = kwargs.get("wind_speed", self.wind_speed)
-        # self.qs = kwargs.get("qs", self.qs)
-        # self.hs = kwargs.get("hs", self.hs)
-        # self.z0 = kwargs.get("z0", self.z0)
-        # self.offset_sigma_z = kwargs.get("offset_sigma_z", self.offset_sigma_z)
-        # self.dispersion_constants = kwargs.get("dispersion_constants", self.dispersion_constants)
-        # self.dispersion_mode = kwargs.get("dispersion_mode", self.dispersion_mode)
-
-        
-        # self.stability_index = kwargs.get("stability_index", self.stability_index)        
-        # self.stability_class = kwargs.get("stability_class", self.stability_class)        
-
-    # @property
-    # def df(self):
-        # """
-        
-        # """
-        # return self._df
-
-    # @df.setter
-    # def df(self, value):
-        # cn = value.columns
-        # if "dx" in cn:
-            # self.dx = value.loc[:,"dx"].to_numpy()
-        # if "dy" in cn:
-            # self.dy = value.loc[:,"dy"].to_numpy()            
-
-        # if "dlatS" in cn:
-            # self.dlatS = value.loc[:,"dlatS"].to_numpy()    
-        # if "dlonS" in cn:
-            # self.dlonS = value.loc[:,"dlonS"].to_numpy()   
-        # if "dlatM" in cn:
-            # self.dlatM = value.loc[:,"dlatM"].to_numpy()   
-        # if "dlonM" in cn:
-            # self.dlonM = value.loc[:,"dlonM"].to_numpy()  
-            
-        # if "latS" in cn:
-            # self.latS = value.loc[:,"latS"].to_numpy()   
-        # if "lonS" in cn:
-            # self.lonS = value.loc[:,"lonS"].to_numpy()   
-        # if "latR" in cn:
-            # self.latR = value.loc[:,"latR"].to_numpy()   
-        # if "lonR" in cn:
-            # self.lonR = value.loc[:,"lonR"].to_numpy()   
-        # if "latM" in cn:
-            # self.latM = value.loc[:,"latM"].to_numpy()   
-        # if "lonM" in cn:
-            # self.lonM = value.loc[:,"lonM"].to_numpy()  
-
-        # if "wind_speed" in cn:
-            # self.wind_speed = value.loc[:,"wind_speed"].to_numpy()  
-        # if "wind_direction" in cn:
-            # self.wind_direction = value.loc[:,"wind_direction"].to_numpy()              
-            
-        # if "qs" in cn:
-            # self.qs = value.loc[:,"qs"].to_numpy()   
-        # if "hs" in cn:
-            # self.hs = value.loc[:,"hs"].to_numpy()   
-        # if "z0" in cn:
-            # self.z0 = value.loc[:,"z0"].to_numpy()   
-        # if "offset_sigma_z" in cn:
-            # self.offset_sigma_z = value.loc[:,"offset_sigma_z"].to_numpy()  
-
-
 
     @property
     def stability_index(self):
@@ -274,18 +191,18 @@ class Source(CT.ClassTools):
             raise ValueError("GPSource.Source.calculate_sigma_y_z(): variable wind_speed is missing")                 
         
             
-        # if self.tc is None:
-            # self.tc = GPF.calculate_tc(self.dx, self.wind_speed, verbose = verbose)
+        if self.tc is None:
+            self.tc = GPF.calculate_tc(self.dx, self.wind_speed, verbose = verbose)
 
-        # if self.dispersion_constants is None:
-            # if self.dispersion_mode is None:
-                # raise ValueError("GPSource.Source.calculate_sigma_y_z(): variable dx is missing")  
-            # self.dispersion_constants = GPF.get_dispersion_constants(dispersion_mode = self.dispersion_mode)
+        if self.dispersion_constants is None:
+            if self.dispersion_mode is None:
+                raise ValueError("GPSource.Source.calculate_sigma_y_z(): variable dx is missing")  
+            self.dispersion_constants = GPF.get_dispersion_constants(dispersion_mode = self.dispersion_mode)
        
         if self.stability_index is None:
             raise ValueError("GPSource.Source.calculate_sigma_y_z(): variable stability_index is missing")        
             
-        self.sigma_y, self.sigma_z = GPF.calculate_sigma(dx = self.dx, z0 = self.z0, tc = self.tc, dispersion_constants = self.dispersion_constants, stability_index = self.stability_index, offset_sigma_z = self.offset_sigma_z, verbose = verbose)
+        self.sigma_y, self.sigma_z = GPF.calculate_sigma(dx = self.dx, z0 = self.z0, tc = self.tc, dispersion_constants = self.dispersion_constants, stability_index = self.stability_index, offset_sigma_z = self.offset_sigma_z, tc_minimum = self.tc_minimum, verbose = verbose)
             
     def calculate_concentration(self, verbose = 0, **kwargs):
         """
@@ -293,6 +210,8 @@ class Source(CT.ClassTools):
         """
     
         verbose = GPF.print_vars(function_name = "GPSource.Source.calculate_sigma_y_z()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)   
+        
+        # print(self.molecule.molecular_mass)
 
-        GPF.calculate_concentration(qs = self.qs, wind_speed = self.wind_speed, sigma_y = self.sigma_y, sigma_z = self.sigma_z, dy = self.dy, zr = self.zr, hs = self.hs, hm = self.hm, molecular_mass = self.molecule.molecular_mass, verbose = verbose)
+        return GPF.calculate_concentration(qs = self.qs, wind_speed = self.wind_speed, sigma_y = self.sigma_y, sigma_z = self.sigma_z, dy = self.dy, zr = self.zr, hs = self.hs, hm = self.hm, molecular_mass = self.molecule.molecular_mass, verbose = verbose)
         

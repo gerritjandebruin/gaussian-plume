@@ -21,6 +21,7 @@ class Molecule(CT.ClassTools):
         
         props = GPC.molecule_properties(molecule, invalid = "error")
         
+        self.molecule_id = props["id"]
         self.aliases = props["aliases"]
         self.formula = props["formula"]
         self.name = props["name"]

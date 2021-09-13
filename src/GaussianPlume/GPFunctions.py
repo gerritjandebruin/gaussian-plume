@@ -11,7 +11,7 @@ import GPConstants as GPC
 
 importlib.reload(GPC)
 
-def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
+def latlon2dlatdlon(lat, lon, latR, lonR, warn_distance_above_meter = 100000, verbose = 0, **kwargs):
     """
     Calculate the distance in meter in north-south and east-west direction for two coordinates. 
     
@@ -31,7 +31,9 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
         Latitude of the reference
     lonR : number, ndarray
         Longitude of the reference
-    
+    warn_distance_above_meter : number (100000)
+        Give a warning when a distance is above this distance (in meters)
+        
     Returns
     -------
     dlat : number or ndarray
@@ -58,6 +60,11 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
     
     dlat = numpy.sin((lat - latR) * GPC.deg2rad) * latlon2dxdy_lat_conversion_factor
     dlon = numpy.cos(lat * GPC.deg2rad) * numpy.sin((lon - lonR) * GPC.deg2rad) * latlon2dxdy_lon_conversion_factor 
+
+    dist = numpy.sqrt(dlat**2 + dlon**2)
+    idx = numpy.where(dist > warn_distance_above_meter)[0]
+    if len(idx) > 0:
+        warnings.warn("GPFunctions.latlon2dlatdlon(): distance is above {:} meter for {:d} data points".format(warn_distance_above_meter, len(idx)))
     
     return dlat, dlon 
 
@@ -65,7 +72,7 @@ def latlon2dlatdlon(lat, lon, latR, lonR, verbose = 0, **kwargs):
 
 
 
-def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = 0):
+def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, warn_distance_above_meter = 100000, verbose = 0):
     """
     Calculate dx and dy.     
     
@@ -81,7 +88,8 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = 0):
         East-west distance between measurement and reference, where positive means the measurement is east of the reference
     wind_direction : number, ndarray, list
         Direction from which the wind comes, in degrees
-    
+    warn_distance_above_meter : number (100000)
+        Give a warning when a distance is above this distance (in meters)
     
     """
 
@@ -100,6 +108,11 @@ def dlatdlon2dxdy(dlatS, dlonS, dlatM, dlonM, wind_direction, verbose = 0):
 
     dx = (dlatS - dlatM) * numpy.cos(wind_direction * GPC.deg2rad) + (dlonS - dlonM) * numpy.sin(wind_direction * GPC.deg2rad)
     dy = (dlatS - dlatM) * numpy.sin(wind_direction * GPC.deg2rad) - (dlonS - dlonM) * numpy.cos(wind_direction * GPC.deg2rad)
+    
+    dist = numpy.sqrt(dx**2 + dy**2)
+    idx = numpy.where(dist > warn_distance_above_meter)[0]
+    if len(idx) > 0:
+        warnings.warn("GPFunctions.dlatdlon2dxdy(): distance is above {:} meter for {:d} data points".format(warn_distance_above_meter, len(idx)))
     
     return dx, dy
 
@@ -168,7 +181,7 @@ def calculate_tc(dx, wind_speed, verbose = 0):
     return dx / (3600 * wind_speed)
 
 
-def calculate_sigma(dx, z0, tc, dispersion_constants, stability_index, offset_sigma_z = 0, verbose = 0, **kwargs):
+def calculate_sigma(dx, z0, tc, dispersion_constants, stability_index, tc_minimum = 0, offset_sigma_z = 0, verbose = 0, **kwargs):
     """
     Calculate the plume width and height at dx. 
     
@@ -199,10 +212,19 @@ def calculate_sigma(dx, z0, tc, dispersion_constants, stability_index, offset_si
     """
     verbose = print_vars(function_name = "GPFunctions.calculate_sigma()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
     
+    
+    
     if numpy.any(dx < 0):
         idx_nan = numpy.where(dx < 0)[0]
         dx[idx_nan] = numpy.nan
-        tc[idx_nan] = numpy.nan
+        if type(tc) == numpy.ndarray:
+            tc[idx_nan] = numpy.nan        
+        
+    if type(tc) == numpy.ndarray:
+        idx = numpy.where(tc < tc_minimum)[0]
+        tc[idx] = tc_minimum
+    elif tc < tc_minimum:
+        tc = tc_minimum
     
     ca = kwargs.get("ca", GPC.sigma_ca)
     cb = kwargs.get("cb", GPC.sigma_cb)
