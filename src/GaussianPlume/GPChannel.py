@@ -1,7 +1,7 @@
 import importlib 
 
 import numpy
-import PythonTools.ClassTools as CT
+import ClassTools as CT
 import GPFunctions as GPF
 import GPMolecule as GPMO
 

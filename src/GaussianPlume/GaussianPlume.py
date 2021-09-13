@@ -37,7 +37,7 @@ import pandas
 import numpy
 
 
-import PythonTools.ClassTools as CT
+import ClassTools as CT
 import GPFunctions as GPF
 import GPImport as GPI
 import GPSource as GPSO
