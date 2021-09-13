@@ -354,7 +354,29 @@ class Test_calculate_concentration(unittest.TestCase):
         self.channels, self.sources, self.molecules = data()
 
 
-    def test_integration(self):
+    # def test_integration(self):
+        # paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
+        # S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
+
+        # S.import_data()
+
+        # S.parse_data()
+        
+        # S.calculate_concentration()
+
+        # for s in range(8):
+
+            # conc = S.get_concentration(plume = 7, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
+            # print(conc)
+        # # self.assertTrue(numpy.isclose(conc,3659.03834))
+        # # print(conc)
+        # # print(S.concentration_model[17200:17210,0,0])
+        # # print(S.concentration_model[17200:17210,1,0])
+        # # print(S.sources[0].tc)
+        # S.export_to_excel()
+        # # print(S.plume_number[17200:])
+
+    def test_integration_check_plume_1_with_excel(self):
         paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
         S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
 
@@ -364,18 +386,33 @@ class Test_calculate_concentration(unittest.TestCase):
         
         S.calculate_concentration()
 
-        for s in range(8):
-
-            conc = S.get_concentration(plume = 4, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
-            print(conc)
-        # self.assertTrue(numpy.isclose(conc,3659.03834))
-        # print(conc)
-        # print(S.concentration_model[17200:17210,0,0])
-        # print(S.concentration_model[17200:17210,1,0])
-        # print(S.sources[0].tc)
         S.export_to_excel()
-        # print(S.plume_number[17200:])
 
+        idx = numpy.where(S.plume_number == 7)[0]
+
+        # for s in range(8):
+
+            # conc = S.get_concentration(plume = 7, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
+            # print(conc)
+            
+            # print(numpy.where(S.sources[s].dx[idx] <= 0)[0])
+            # print(numpy.where(numpy.absolute(S.sources[s].dy[idx]) >= numpy.absolute(S.sources[s].dx[idx]) * 5)[0])
+
+        for s in range(8):            
+            conc = S.get_concentration(plume = None, cumulative = False, model = True, channel = 0, molecule = 0, source = s)
+            # print(conc[idx])   
+            print(conc[idx[-1]+1])           
+        
+        
+        # dx = S.sources[4].dx[idx]
+        # # print(dx)
+        # dy = S.sources[4].dy[idx]
+        # # print(dy)
+        # print(numpy.absolute(dy) < numpy.absolute(5*dx))
+        
+        # conc = S.get_concentration(plume = 1, cumulative = False, model = True, channel = 0, molecule = 0, source = 0)
+        # print(conc)
+        # print(numpy.sum(conc))
 
 
 if __name__ == '__main__': 
