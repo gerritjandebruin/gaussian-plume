@@ -739,6 +739,34 @@ class GaussianPlume(CT.ClassTools):
      
 
     def parse_wind(self, source_index, source, verbose = 0, **kwargs):
+        """
+        Parse the wind direction and speed.
+        
+        Arguments
+        ---------
+        source_index : int
+            The index of the source in `self.sources'
+        source : GPSource object
+            The source object itself
+        
+        Notes
+        -----
+        'wind_direction':
+        
+        1. set earlier
+        2. measurement data ('df')
+        3. static parameters ('df_static')
+        4. no error (?)
+
+        'wind_speed':
+        
+        1. set earlier
+        2. measurement data ('df')
+        3. static parameters ('df_static')
+        4. error
+        
+        """
+    
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_data_dx_dy()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)  
 
         log_label = "S{:d} wind_direction".format(source.source_id)
@@ -774,6 +802,25 @@ class GaussianPlume(CT.ClassTools):
 
     def parse_dx_dy(self, source_index, source, verbose = 0, **kwargs):
         """
+        Parse dx and dy.
+        
+        Arguments
+        ---------
+        source_index : int
+            The index of the source in `self.sources'
+        source : GPSource object
+            The source object itself
+        
+        Notes
+        -----
+        `dx` and `dy`:
+        
+        1. set earlier
+        2. measurement data (`df`, as `dxSX`, where `X is the source_id)
+        3. sources (`df_sources`)
+        4. measurement data (`df`, as `dxS`)
+        5. no error, `dx` and `dy` can be calculated from other location data
+
         
         """
         
