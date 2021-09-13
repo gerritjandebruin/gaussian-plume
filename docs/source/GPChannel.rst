@@ -1,7 +1,7 @@
-GPPlume module
+GPChannel module
 ==================
 
-.. automodule:: GPPlume
+.. automodule:: GPChannel
    :members:
    :undoc-members:
    :show-inheritance:

@@ -10,11 +10,13 @@ Welcome to GaussianPlume's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-	GPPlume
-	GPPlumes
+	GaussianPlume
+	GPChannel
+	GPSource
 	GPFunctions
-	GPImportData
+	GPImport
 	GPConstants
+	GPMolecule
 
 
 

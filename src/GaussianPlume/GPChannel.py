@@ -9,7 +9,24 @@ importlib.reload(GPF)
 importlib.reload(GPMO)
 
 class Channel(CT.ClassTools):
-
+    """
+    
+    Attributes
+    ----------
+    channel_id : int
+        Identifier of this channel.
+    device_name : str
+        The name of the device
+    molecule : GPMolecule or str
+        The molecule measured with this channel. If the input is a string, it will generate a GPMolecule object.
+    label : str (opt)
+        A short label to be used for this channel. If it is not set, it will be the `channel_id`, `molecule.name`, and `device_name`.
+    concentration : ndarray
+        The calculated concentration.
+    plume_number : ndarray
+        The number of the plumes, from the measurement data. 
+    
+    """
     def __init__(self, channel_id, molecule, device_name, verbose = 0, **kwargs):
         """
         

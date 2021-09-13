@@ -1,7 +1,7 @@
-GPImportData module
+GPImport module
 ====================================
 
-.. automodule:: GPImportData
+.. automodule:: GPImport
    :members:
    :undoc-members:
    :show-inheritance:
