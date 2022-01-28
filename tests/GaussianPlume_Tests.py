@@ -7,6 +7,9 @@ import warnings
 import logging
 import pathlib
 import pandas
+import datetime
+import matplotlib 
+import matplotlib.pyplot as plt
 
 import GaussianPlume as GP
 import GPFunctions as GPF
@@ -347,6 +350,126 @@ class Test_parse_data(unittest.TestCase):
         self.assertTrue(numpy.allclose(S.sources[0].wind_speed, temp["wind_speed"]))
 
 
+    def test_parse_source_parameter_qs_set_earlier(self):
+        
+        
+        S = GP.GaussianPlume(sources = self.sources, verbose = self.verbose)
+        
+        destination = S.sources[0].qs
+        source_index = 0
+        label = "qs"
+        parse_order = ["sources", "static", "error"]
+        
+        S.parse_source_parameter(destination, label, parse_order, source_index, S.sources[0], verbose = self.verbose)
+        self.assertTrue(S.sources[0].qs == 0.125)
+        self.assertTrue(S.log["qs S0"] == "set earlier")
+
+
+    def test_parse_source_parameter_qs_from_df_static(self):
+        
+        df_static = {
+            "qs": [0.5],
+        }
+        df_static = pandas.DataFrame(df_static)
+        S = GP.GaussianPlume(sources = self.sources, verbose = self.verbose, df_static = df_static)
+
+        S.sources[0].qs = None
+        destination = S.sources[0].qs
+        source_index = 0
+        label = "qs"
+        parse_order = ["df_sources", "df_static", "error"]
+        
+        S.sources[0].qs = S.parse_source_parameter(destination, label, parse_order, source_index, S.sources[0], verbose = self.verbose)
+
+        self.assertTrue(S.sources[0].qs == 0.5)
+        self.assertTrue(S.log["qs S0"] == "from df_static")
+
+
+    def test_parse_source_parameter_qs_from_df_SX(self):
+        
+        temp = {
+            "qs S0": numpy.arange(5),
+        }
+        df = pandas.DataFrame(temp)
+        S = GP.GaussianPlume(sources = self.sources, verbose = self.verbose, df = df)
+
+        S.sources[0].qs = None
+        destination = S.sources[0].qs
+        source_index = 0
+        label = "qs"
+        parse_order = ["df SX", "error"]
+        
+        S.sources[0].qs = S.parse_source_parameter(destination, label, parse_order, source_index, S.sources[0], verbose = self.verbose)
+
+        self.assertTrue(numpy.allclose(S.sources[0].qs, temp["qs S0"]))
+        self.assertTrue(S.log["qs S0"] == "from df SX, no nan")
+                
+    def test_parse_source_parameter_qs_from_df(self):
+        
+        temp = {
+            "qs": numpy.arange(5),
+        }
+        df = pandas.DataFrame(temp)
+        S = GP.GaussianPlume(sources = self.sources, verbose = self.verbose, df = df)
+
+        S.sources[0].qs = None
+        destination = S.sources[0].qs
+        source_index = 0
+        label = "qs"
+        parse_order = ["df", "error"]
+        
+        S.sources[0].qs = S.parse_source_parameter(destination, label, parse_order, source_index, S.sources[0], verbose = self.verbose)
+
+        self.assertTrue(numpy.allclose(S.sources[0].qs, temp["qs"]))
+        self.assertTrue(S.log["qs S0"] == "from df, no nan")
+        
+        
+    def test_parse_source_parameter_dispersion_mode_default(self):
+        
+        temp = {
+            "dispersion_mode": numpy.arange(5),
+        }
+        df = pandas.DataFrame(temp)
+        S = GP.GaussianPlume(sources = self.sources, verbose = self.verbose) #, df = df)
+
+        S.sources[0].dispersion_mode = None
+        destination = S.sources[0].dispersion_mode
+        source_index = 0
+        label = "dispersion_mode"
+        parse_order = ["default", "error"]
+        default = "farm"
+        
+        S.sources[0].dispersion_mode = S.parse_source_parameter(destination, label, parse_order, source_index, S.sources[0], default = default, verbose = self.verbose)
+        # print(S.sources[0].dispersion_mode)
+        # print(S.log["dispersion_mode S0"])
+        self.assertTrue(S.sources[0].dispersion_mode, "farm")
+        self.assertTrue(S.log["dispersion_mode S0"] == "set to default farm")        
+
+
+    def test_parse_measured_data(self):
+        
+        temp = {
+            "ppb C0": numpy.arange(10),
+        }
+        df = pandas.DataFrame(temp)
+        S = GP.GaussianPlume(verbose = self.verbose, channels = self.channels, df = df)
+
+        # S.sources[0].dispersion_mode = None
+        destination = S.channels[0].concentration_measured
+        channel_index = 0
+        label = "ppb"
+        parse_order = ["df", "error"]
+        
+        
+        S.channels[0].concentration_measured = S.parse_source_parameter(destination, label, parse_order, channel_index, S.channels[0], verbose = self.verbose)
+        # print(S.channels[0].concentration_measured)
+        # print(S.log["ppb C0"])
+        self.assertTrue(numpy.allclose(S.channels[0].concentration_measured, temp["ppb C0"]))
+        self.assertTrue(S.log["ppb C0"] == "from df, no nan")     
+
+
+        
+
 class Test_calculate_concentration(unittest.TestCase):
 
     def setUp(self):
@@ -376,7 +499,80 @@ class Test_calculate_concentration(unittest.TestCase):
         # S.export_to_excel()
         # # print(S.plume_number[17200:])
 
-    def test_integration_check_plume_1_with_excel(self):
+
+    # def test_integration_demonstration(self):
+    
+    
+        # paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
+        # S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
+
+        # S.import_data()
+
+        # S.parse_data()
+        
+        # S.calculate_concentration()
+
+        # S.export_to_excel()
+        # filename = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\plume_corrections_1.xlsx"
+        # S.import_plume_corrections_from_Excel(sheetname = "Sheet1", filename = filename)
+
+        # S.plot_results(plume = 2, molecule = 0)
+
+        # # print(S.df)
+        # # print(S.df.dtypes)
+
+        # # plt.plot(S.df["datetime"], S.concentration_measured[:,0])
+        # # plt.show()
+
+        # # print(numpy.amin(S.sources[0].latM))
+        # # print(numpy.amax(S.sources[0].latM))
+        # # print(numpy.amin(S.sources[0].lonM))
+        # # print(numpy.amax(S.sources[0].lonM))
+
+
+    # def test_integration_check_plume_1_with_excel(self):
+        # paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
+        # S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
+
+        # S.import_data()
+
+        # print(S.df_sources)
+
+        # S.parse_data()
+        
+        # S.calculate_concentration()
+
+        # S.export_to_excel()
+
+        # idx = numpy.where(S.plume_number == 7)[0]
+
+        # # for s in range(8):
+
+            # # conc = S.get_concentration(plume = 7, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
+            # # print(conc)
+            
+            # # print(numpy.where(S.sources[s].dx[idx] <= 0)[0])
+            # # print(numpy.where(numpy.absolute(S.sources[s].dy[idx]) >= numpy.absolute(S.sources[s].dx[idx]) * 5)[0])
+
+        # for s in range(8):            
+            # conc = S.get_concentration(plume = None, cumulative = False, model = True, channel = 0, molecule = 0, source = s)
+            # # print(conc[idx])   
+            # print(conc[idx[-1]+1])           
+        
+        
+        # # dx = S.sources[4].dx[idx]
+        # # # print(dx)
+        # # dy = S.sources[4].dy[idx]
+        # # # print(dy)
+        # # print(numpy.absolute(dy) < numpy.absolute(5*dx))
+        
+        # # conc = S.get_concentration(plume = 1, cumulative = False, model = True, channel = 0, molecule = 0, source = 0)
+        # # print(conc)
+        # # print(numpy.sum(conc))
+
+    def test_integration_demonstration_time(self):
+    
+    
         paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
         S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
 
@@ -386,33 +582,21 @@ class Test_calculate_concentration(unittest.TestCase):
         
         S.calculate_concentration()
 
-        S.export_to_excel()
-
-        idx = numpy.where(S.plume_number == 7)[0]
-
-        # for s in range(8):
-
-            # conc = S.get_concentration(plume = 7, cumulative = True, model = True, channel = 0, molecule = 0, source = s)
-            # print(conc)
-            
-            # print(numpy.where(S.sources[s].dx[idx] <= 0)[0])
-            # print(numpy.where(numpy.absolute(S.sources[s].dy[idx]) >= numpy.absolute(S.sources[s].dx[idx]) * 5)[0])
-
-        for s in range(8):            
-            conc = S.get_concentration(plume = None, cumulative = False, model = True, channel = 0, molecule = 0, source = s)
-            # print(conc[idx])   
-            print(conc[idx[-1]+1])           
+        start_time = datetime.datetime(year = 2020, month = 9, day = 25, hour = 12, minute = 10, second = 0)
+        end_time = datetime.datetime(year = 2020, month = 9, day = 25, hour = 12, minute = 45, second = 0)
         
-        
-        # dx = S.sources[4].dx[idx]
-        # # print(dx)
-        # dy = S.sources[4].dy[idx]
-        # # print(dy)
-        # print(numpy.absolute(dy) < numpy.absolute(5*dx))
-        
-        # conc = S.get_concentration(plume = 1, cumulative = False, model = True, channel = 0, molecule = 0, source = 0)
-        # print(conc)
-        # print(numpy.sum(conc))
+        S.plot_measuremements_timeframe(start_time = start_time, end_time = end_time, normalize_signal = False, verbose = 0)
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__': 
@@ -430,9 +614,9 @@ if __name__ == '__main__':
         # unittest.TextTestRunner(verbosity=verbosity).run(suite)   
 
 
-    # if 1:
-        # suite = unittest.TestLoader().loadTestsFromTestCase( Test_parse_data)
-        # unittest.TextTestRunner(verbosity=verbosity).run(suite)           
+    if 1:
+        suite = unittest.TestLoader().loadTestsFromTestCase( Test_parse_data)
+        unittest.TextTestRunner(verbosity=verbosity).run(suite)           
 
     if 1:
         suite = unittest.TestLoader().loadTestsFromTestCase( Test_calculate_concentration)

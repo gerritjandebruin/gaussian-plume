@@ -283,8 +283,37 @@ def import_measurement_data(paf, verbose = 0):
     
     lower_case_column_names(df)
     
+    df["datetime"] = pandas.to_datetime(df["datetime"])
+    
     return df 
     
+
+def import_plume_corrections(paf, verbose = 0):
+
+
+    verbose = GPF.print_vars(function_name = "GPImportData.import_plume_corrections()", function_vars = vars(), verbose = verbose, self_verbose = 0)  
+
+    if type(paf) != list:
+        paf = [paf]
+    
+    df = None
+    for p in paf:
+        _df = import_measurement_data_helper(p, verbose = 0)
+        
+        if df is None:
+            df = _df
+        else:
+            if numpy.all(df.columns == _df.columns):
+                df = pandas.concat([df, _df])
+            else:
+                raise pandas.errors.InvalidIndexError
+            
+    df = df.reset_index(drop = True)
+    
+    lower_case_column_names(df)
+    
+    return df 
+
     
     
 def merge_measurement_static_dynamic_df(df, df_static, df_dynamic, verbose = 0):

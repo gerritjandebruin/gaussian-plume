@@ -70,7 +70,15 @@ def molecule_properties(molecule, invalid = "warning"):
     """
     molecule = molecule.lower()
 
-    if molecule in ["methane", "ch4"]:
+    if molecule in ["co2", "carbon dioxide"]:
+        return {
+            "id": "co2",
+            "aliases": ["co2", "carbon dioxide"],
+            "formula": "CO2",
+            "name": "carbon dioxide",
+            "molecular_mass": 44.009,
+        }
+    elif molecule in ["methane", "ch4"]:
         return {
             "id": "ch4",
             "aliases": ["methane", "ch4"],
@@ -78,6 +86,23 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "methane",
             "molecular_mass": 16,
         }
+    elif molecule in ["no", "nitrogen oxide"]:
+        return {
+            "id": "no",
+            "aliases": ["no", "nitrogen oxide"],
+            "formula": "NO",
+            "name": "nitrogen oxide",
+            "molecular_mass": 30,
+        }  
+    elif molecule in ["nox"]:
+        return {
+            "id": "nox",
+            "aliases": ["nox"],
+            "formula": "NOx",
+            "name": "nitrogen oxides",
+            "molecular_mass": 30,
+        }   
+
     elif molecule in ["n2o", "nitrous oxide"]:
         return {
             "id": "n2o",
@@ -94,14 +119,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "nitrogen dioxide",
             "molecular_mass": 46,
         }        
-    elif molecule in ["no", "nitrogen oxide"]:
-        return {
-            "id": "no",
-            "aliases": ["no", "nitrogen oxide"],
-            "formula": "NO",
-            "name": "nitrogen oxide",
-            "molecular_mass": 30,
-        }                
+          
     # elif molecule in ["nox", "ethane"]:
         # return {
             # "formula": "C2H6",

@@ -16,7 +16,10 @@ def import_df_from_csv(paf, **kwargs):
     
     with open(paf, "rb") as F:
         df = pandas.read_csv(F, **kwargs)
-        
+    # 25/9/2020 07:40:05
+    if "datetime" in df.columns:
+        df["datetime"] = pandas.to_datetime(df["datetime"], format = "%d/%m/%Y %H:%M:%S")
+    
     return df
 
 
