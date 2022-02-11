@@ -1,7 +1,14 @@
+import importlib 
+
 import numpy
+
 import ClassTools as CT
 import GPFunctions as GPF
 import GPConstants as GPC
+
+importlib.reload(CT)
+importlib.reload(GPF)
+importlib.reload(GPC)
 
 class Molecule(CT.ClassTools):
 
@@ -11,7 +18,9 @@ class Molecule(CT.ClassTools):
         Arguments
         ---------
         molecule : str
-            The name of the molecule
+            The name of the molecule. An incorrect name or `None` will raise an error. 
+       
+        
         """
         self.verbose = verbose
         

@@ -13,7 +13,7 @@ importlib.reload(GPMO)
 
 class Source(CT.ClassTools):
 
-    def __init__(self, source_id, molecule, verbose = 0, **kwargs):
+    def __init__(self, source_id, molecule = None, verbose = 0, **kwargs):
         """
         
         Arguments
@@ -32,14 +32,19 @@ class Source(CT.ClassTools):
 
         self.source_id = source_id
 
-        if type(molecule) == str:
+        if type(molecule) == str:            
             self.molecule = GPMO.Molecule(molecule, verbose = verbose)
+        elif molecule is None:
+            self.molecule = molecule
         else:
             self.molecule = molecule
         
         self.label = kwargs.get("label", None)
         if self.label is None:
-            self.label = "{:} {:s}".format(self.source_id, self.molecule.name)
+            if self.molecule is None:
+                self.label = "{:}".format(self.source_id)
+            else:
+                self.label = "{:} {:s}".format(self.source_id, self.molecule.name)
     
         self.dx = kwargs.get("dx", None)
         self.dy = kwargs.get("dy", None)
@@ -204,14 +209,18 @@ class Source(CT.ClassTools):
             
         self.sigma_y, self.sigma_z = GPF.calculate_sigma(dx = self.dx, z0 = self.z0, tc = self.tc, dispersion_constants = self.dispersion_constants, stability_index = self.stability_index, offset_sigma_z = self.offset_sigma_z, tc_minimum = self.tc_minimum, verbose = verbose)
             
-    def calculate_concentration(self, verbose = 0, **kwargs):
+    def calculate_concentration(self, molecule = None, verbose = 0, **kwargs):
         """
          
         """
     
         verbose = GPF.print_vars(function_name = "GPSource.Source.calculate_sigma_y_z()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)   
         
-        # print(self.molecule.molecular_mass)
+        if molecule is None:
+            if self.molecule is None:
+                raise ValueError("GPSource.calculate_concentration(): no molecule is defined")   
+            else:
+                molecule = self.molecule
 
-        return GPF.calculate_concentration(qs = self.qs, wind_speed = self.wind_speed, sigma_y = self.sigma_y, sigma_z = self.sigma_z, dy = self.dy, zr = self.zr, hs = self.hs, hm = self.hm, molecular_mass = self.molecule.molecular_mass, verbose = verbose)
+        return GPF.calculate_concentration(qs = self.qs, wind_speed = self.wind_speed, sigma_y = self.sigma_y, sigma_z = self.sigma_z, dy = self.dy, zr = self.zr, hs = self.hs, hm = self.hm, molecular_mass = molecule.molecular_mass, verbose = verbose)
         

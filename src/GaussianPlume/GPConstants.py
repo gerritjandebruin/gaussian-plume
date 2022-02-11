@@ -50,7 +50,21 @@ def dispersion_constants(dispersion_mode):
         
     return dispersion_constants
 
-implemented_molecules = ["ch4", "n2o", "no2", "no", "c2h6"]
+
+def implemented_molecules():
+    """
+    List with molecule that are implemented. The order of the list has to match with the order of molecule_properties().
+    
+    """
+    return [
+            ["co2", "carbon dioxide"],
+            ["methane", "ch4"],
+            ["no", "nitrogen oxide"],
+            ["nox"],
+            ["n2o", "nitrous oxide"],
+            ["no2", "nitrogen dioxide"],
+            ["c2h6", "ethane"],
+        ]
         
 def molecule_properties(molecule, invalid = "warning"):
     """
@@ -68,9 +82,20 @@ def molecule_properties(molecule, invalid = "warning"):
         A dictionary with molecule properties. 
     
     """
+
+    if  molecule is None:
+        if invalid == "error":
+            raise ValueError ("GPConstants.molecule_properties(): None is not a valid name for a molecule")
+        elif invalid == "none":
+            return None
+        else:
+            warnings.warn("GPConstants.molecule_properties(): None is not a valid name for a molecule")
+    
     molecule = molecule.lower()
 
-    if molecule in ["co2", "carbon dioxide"]:
+    molecules = implemented_molecules()
+
+    if molecule in molecules[0]:
         return {
             "id": "co2",
             "aliases": ["co2", "carbon dioxide"],
@@ -78,7 +103,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "carbon dioxide",
             "molecular_mass": 44.009,
         }
-    elif molecule in ["methane", "ch4"]:
+    elif molecule in molecules[1] :
         return {
             "id": "ch4",
             "aliases": ["methane", "ch4"],
@@ -86,7 +111,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "methane",
             "molecular_mass": 16,
         }
-    elif molecule in ["no", "nitrogen oxide"]:
+    elif molecule in molecules[2]:
         return {
             "id": "no",
             "aliases": ["no", "nitrogen oxide"],
@@ -94,7 +119,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "nitrogen oxide",
             "molecular_mass": 30,
         }  
-    elif molecule in ["nox"]:
+    elif molecule in molecules[3]:
         return {
             "id": "nox",
             "aliases": ["nox"],
@@ -103,7 +128,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "molecular_mass": 30,
         }   
 
-    elif molecule in ["n2o", "nitrous oxide"]:
+    elif molecule in molecules[4]:
         return {
             "id": "n2o",
             "aliases": ["n2o", "nitrous oxide"],
@@ -111,7 +136,7 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "nitrous oxide",
             "molecular_mass": 44,
         }        
-    elif molecule in ["no2", "nitrogen dioxide"]:
+    elif molecule in molecules[5]:
         return {
             "id": "no2",
             "aliases": ["no2", "nitrogen dioxide"],
@@ -119,36 +144,21 @@ def molecule_properties(molecule, invalid = "warning"):
             "name": "nitrogen dioxide",
             "molecular_mass": 46,
         }        
-          
-    # elif molecule in ["nox", "ethane"]:
-        # return {
-            # "formula": "C2H6",
-            # "name": "ethane",
-            # "molecular_mass": 30,
-        # }  
-    elif molecule in ["c2h6", "ethane"]:
+    elif molecule in molecules[6] :
         return {
             "id": "c2h6",
             "aliases": ["c2h6", "ethane"],
             "formula": "C2H6",
             "name": "ethane",
             "molecular_mass": 30,
-        }  
-    # elif molecule in ["PM10"]:
-        # return {
-            # "formula": "PM10",
-            # "name": "PM10",
-            # "molecular_mass": 30,
-        # }          
+        }       
     else:
-        if invalid.lower == "error":
+        if invalid == "error":
             raise ValueError ("GPConstants.molecule_properties(): {:} is not a valid name for a molecule".format(molecule))
-        if invalid.lower == "none":
+        elif invalid == "none":
             return None
         else:
             warnings.warn("GPConstants.molecule_properties(): {:} is not a valid name for a molecule".format(molecule))
-            return None
-        
         
         
         
