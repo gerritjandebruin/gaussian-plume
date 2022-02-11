@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>GaussianPlume package &mdash; GaussianPlume 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> GaussianPlume
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">GaussianPlume package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#gaussianplume-gpconstants-module">GaussianPlume.GPConstants module</a></li>
+<li><a class="reference internal" href="#gaussianplume-gpfunctions-module">GaussianPlume.GPFunctions module</a></li>
+<li><a class="reference internal" href="#gaussianplume-gpimportmeasurementparameters-module">GaussianPlume.GPImportMeasurementParameters module</a></li>
+<li><a class="reference internal" href="#module-GaussianPlume">Module contents</a><ul>
+<li><a class="reference internal" href="#import-data">Import data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaussianPlume</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>GaussianPlume package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/GaussianPlume.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="gaussianplume-package">
+<h1>GaussianPlume package<a class="headerlink" href="#gaussianplume-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaussianplume-gpconstants-module">
+<h2>GaussianPlume.GPConstants module<a class="headerlink" href="#gaussianplume-gpconstants-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaussianplume-gpfunctions-module">
+<h2>GaussianPlume.GPFunctions module<a class="headerlink" href="#gaussianplume-gpfunctions-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaussianplume-gpimportmeasurementparameters-module">
+<h2>GaussianPlume.GPImportMeasurementParameters module<a class="headerlink" href="#gaussianplume-gpimportmeasurementparameters-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-GaussianPlume">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-GaussianPlume" title="Permalink to this headline">¶</a></h2>
+<p>Data processing is done in three steps:</p>
+<ol class="arabic simple">
+<li><p>Import data</p></li>
+<li><p>Parse data</p></li>
+<li><p>Calculate results</p></li>
+</ol>
+<div class="section" id="import-data">
+<h3>Import data<a class="headerlink" href="#import-data" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="GaussianPlume.GaussianPlume">
+<em class="property">class </em><code class="sig-prename descclassname">GaussianPlume.</code><code class="sig-name descname">GaussianPlume</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ClassTools.ClassTools</span></code></p>
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.sources">
+<code class="sig-name descname">sources</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>List with sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.channels">
+<code class="sig-name descname">channels</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>List with channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.molecules">
+<code class="sig-name descname">molecules</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.molecules" title="Permalink to this definition">¶</a></dt>
+<dd><p>List with molecules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.plumes">
+<code class="sig-name descname">plumes</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.plumes" title="Permalink to this definition">¶</a></dt>
+<dd><p>List with plumes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.df">
+<code class="sig-name descname">df</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.df" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataFrame with the measurement data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.df_sources">
+<code class="sig-name descname">df_sources</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.df_sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataFrame with the sources</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.df_channels">
+<code class="sig-name descname">df_channels</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.df_channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataFrame with the channels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.df_static">
+<code class="sig-name descname">df_static</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.df_static" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataFrame with static measurement parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.log">
+<code class="sig-name descname">log</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>A log of where values were set. If it is not given, a new one will be made.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict (optional)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.comment">
+<code class="sig-name descname">comment</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A comment that can be added to the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (optional)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.filename">
+<code class="sig-name descname">filename</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>The filename where static parameters, sources, and channels are listed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Path or str (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="GaussianPlume.GaussianPlume.path">
+<code class="sig-name descname">path</code><a class="headerlink" href="#GaussianPlume.GaussianPlume.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path where static parameters, sources, and channels are listed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Path or str (optional, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.calculate_concentration">
+<code class="sig-name descname">calculate_concentration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.calculate_concentration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.calculate_concentration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.export_to_excel">
+<code class="sig-name descname">export_to_excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.export_to_excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.export_to_excel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.generate_sources">
+<code class="sig-name descname">generate_sources</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.generate_sources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.generate_sources" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.get_concentration">
+<code class="sig-name descname">get_concentration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plume</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">molecule</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cumulative</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.get_concentration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.get_concentration" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plume</strong> (<em>number</em><em> or </em><em>list</em><em> (</em><em>default None</em><em>)</em>) – The plume number(s). If None, it will return all data points.</p></li>
+<li><p><strong>model</strong> (<em>Bool</em><em> (</em><em>True</em><em>)</em>) – If True, return the data from the model. If False, return the measured data.</p></li>
+<li><p><strong>source</strong> (<em>number</em><em> (</em><em>default None</em><em>)</em>) – The number of the source. If None, return all sources. Only used for model data.</p></li>
+<li><p><strong>channel</strong> (<em>number</em><em> (</em><em>default None</em><em>)</em>) – The number of the channel. If None, return all channels. Only used for measured data.</p></li>
+<li><p><strong>molecule</strong> (<em>number</em><em> (</em><em>default None</em><em>)</em>) – The number of the molecule. If None, return all molecule. Only used for model data.</p></li>
+<li><p><strong>cumulative</strong> (<em>Bool</em><em> (</em><em>False</em><em>)</em>) – If True, sum all data. If False, return as an array.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_channels_from_Excel">
+<code class="sig-name descname">import_channels_from_Excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sheetname</span><span class="o">=</span><span class="default_value">'channels'</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_channels_from_Excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_channels_from_Excel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sheetname</strong> (<em>str</em><em> (</em><em>optional</em><em>, </em><em>&quot;channels&quot;</em><em>)</em>) – The name of the sheet with the static parameters</p></li>
+<li><p><strong>filename</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Filename. For more information, see GPFunctions.handle_filename_path.</p></li>
+<li><p><strong>path</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Path. For more information, see GPFunctions.handle_filename_path.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If both <cite>filename</cite> and <cite>path</cite> are None (default), it will use the path-and-filename set during initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_data">
+<code class="sig-name descname">import_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import all data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sheetname</strong> (<em>str</em><em> (</em><em>optional</em><em>, </em><em>&quot;static parameters&quot;</em><em>)</em>) – The name of the sheet with the static parameters</p></li>
+<li><p><strong>filename</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Filename. For more information, see GPFunctions.handle_filename_path.</p></li>
+<li><p><strong>path</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Path. For more information, see GPFunctions.handle_filename_path.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If both <cite>filename</cite> and <cite>path</cite> are None (default), it will use the path-and-filename set during initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_measurement_data_from_Excel">
+<code class="sig-name descname">import_measurement_data_from_Excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sheetname</span><span class="o">=</span><span class="default_value">'data'</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">drop_non_plume</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_measurement_data_from_Excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_measurement_data_from_Excel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_measurement_data_from_csv">
+<code class="sig-name descname">import_measurement_data_from_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">drop_non_plume</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_measurement_data_from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_measurement_data_from_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_sources_from_Excel">
+<code class="sig-name descname">import_sources_from_Excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sheetname</span><span class="o">=</span><span class="default_value">'sources'</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_sources_from_Excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_sources_from_Excel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sheetname</strong> (<em>str</em><em> (</em><em>optional</em><em>, </em><em>&quot;sources&quot;</em><em>)</em>) – The name of the sheet with the static parameters</p></li>
+<li><p><strong>filename</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Filename. For more information, see GPFunctions.handle_filename_path.</p></li>
+<li><p><strong>path</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Path. For more information, see GPFunctions.handle_filename_path.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If both <cite>filename</cite> and <cite>path</cite> are None (default), it will use the path-and-filename set during initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.import_static_parameters">
+<code class="sig-name descname">import_static_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sheetname</span><span class="o">=</span><span class="default_value">'static parameters'</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.import_static_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.import_static_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import static parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sheetname</strong> (<em>str</em><em> (</em><em>optional</em><em>, </em><em>&quot;static parameters&quot;</em><em>)</em>) – The name of the sheet with the static parameters</p></li>
+<li><p><strong>filename</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Filename. For more information, see GPFunctions.handle_filename_path.</p></li>
+<li><p><strong>path</strong> (<em>Path</em><em> or </em><em>str</em><em> (</em><em>optional</em><em>, </em><em>None</em><em>)</em>) – Path. For more information, see GPFunctions.handle_filename_path.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If both <cite>filename</cite> and <cite>path</cite> are None (default), it will use the path-and-filename set during initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_channel_parameters">
+<code class="sig-name descname">parse_channel_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel_index</span></em>, <em class="sig-param"><span class="n">channel</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_channel_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_channel_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_data">
+<code class="sig-name descname">parse_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_data" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Notes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_dlat_dlon">
+<code class="sig-name descname">parse_dlat_dlon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_index</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_dlat_dlon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_dlat_dlon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_dx_dy">
+<code class="sig-name descname">parse_dx_dy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_index</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_dx_dy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_dx_dy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_lat_lon">
+<code class="sig-name descname">parse_lat_lon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_index</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">flag_dlatS_dlonS</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">flag_dlatM_dlonM</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_lat_lon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_lat_lon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_other_source_parameters">
+<code class="sig-name descname">parse_other_source_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_index</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_other_source_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_other_source_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GaussianPlume.GaussianPlume.parse_wind">
+<code class="sig-name descname">parse_wind</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_index</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GaussianPlume.html#GaussianPlume.parse_wind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GaussianPlume.GaussianPlume.parse_wind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robbert Bloem.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
