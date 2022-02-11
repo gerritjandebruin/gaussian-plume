@@ -206,7 +206,7 @@ class Source(CT.ClassTools):
             
     def calculate_concentration(self, verbose = 0, **kwargs):
         """
-        
+         
         """
     
         verbose = GPF.print_vars(function_name = "GPSource.Source.calculate_sigma_y_z()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose)   
