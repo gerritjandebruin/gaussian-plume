@@ -1,5 +1,6 @@
 
 # Gaussian Plume Simulator
+[![DOI](https://zenodo.org/badge/521653949.svg)](https://zenodo.org/badge/latestdoi/521653949)
 
 This is a Python implementation of the [Gaussian air pollutant dispersion equation](https://en.wikipedia.org/wiki/Atmospheric_dispersion_modeling#Gaussian_air_pollutant_dispersion_equation).
 
