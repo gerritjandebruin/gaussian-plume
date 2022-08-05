@@ -1,4 +1,5 @@
 import importlib
+import numpy
 import pandas
 
 import GPFunctions as GPF
