@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'GaussianPlume'
-copyright = '2021, Robbert Bloem'
+copyright = '2022, TNO'
 author = 'Robbert Bloem'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.0.2alpha'
 
 
 # -- General configuration ---------------------------------------------------
