@@ -117,7 +117,7 @@ class Test_import_data_from_Excel(unittest.TestCase):
     
         S = GP.GaussianPlume(channels = self.channels, molecules = self.molecules, sources = self.sources, dispersion_mode  = "farm", verbose = self.verbose)
         sheetname = "data 3"
-        filename = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-1.xlsx"
+        filename = r".\tests\testdata\inputfiles\testdata_20200925-1.xlsx"
 
         S.import_measurement_data_from_Excel(sheetname = sheetname, filename = filename, verbose = self.verbose)
         print(S.df.shape)
@@ -151,7 +151,7 @@ class Test_import_data_from_Excel(unittest.TestCase):
         
         S = GP.GaussianPlume(verbose = self.verbose)
         sheetname = "static parameters"
-        filename = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
+        filename = r"C:\Python\gaussianplume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
         S.import_static_parameters(sheetname, filename = filename, verbose = self.verbose)
         print(S)
         
@@ -573,7 +573,7 @@ class Test_calculate_concentration(unittest.TestCase):
     def test_integration_demonstration_time(self):
     
     
-        paf = r"C:\Python\GaussianPlume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
+        paf = r"C:\Projects\gaussianplume\tests\testdata\inputfiles\testdata_20200925-3.xlsx"
         S = GP.GaussianPlume(verbose = self.verbose, filename = paf)
 
         S.import_data()
