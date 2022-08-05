@@ -18,7 +18,7 @@ def dispersion_constants(dispersion_mode):
     
     Arguments
     ---------
-    mode : string
+    dispersion_mode : string
         Name of the dispersion constant set. 
         
     Returns

@@ -4,33 +4,7 @@ Data processing is done in three steps:
 1. Import data
 2. Parse data
 3. Calculate results
-
-
-
-
-
-Import data
-===========
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 """
-
-
-
 import importlib
 import pathlib
 import pandas
@@ -84,10 +58,6 @@ class GaussianPlume(CT.ClassTools):
         The filename where static parameters, sources, and channels are listed. 
     path : Path or str (optional, None)
         The path where static parameters, sources, and channels are listed. 
-        
-        
-    
-    
     """
 
     def __init__(self, verbose = 0, **kwargs):
@@ -443,12 +413,6 @@ class GaussianPlume(CT.ClassTools):
  
                         
     def export_to_excel(self, verbose = 0, **kwargs):
-        """
-        
-        
-        """
-        
-        
         n_plumes = numpy.amax(self.plume_number) - 1 # len(self.plumes)
         self.plumes = numpy.arange(1,n_plumes+1)
         
@@ -525,16 +489,6 @@ class GaussianPlume(CT.ClassTools):
         res = pandas.DataFrame(df)
         
         print(res)
-
-            
-            
-        
-        # print(dist)
-        # print(concentration_measured)
-        # print(concentration_model)
-        # print(sigma_y)
-        # print(sigma_z)
-        # print(tc)
         
     def apply_plume_corrections(self, plume_ids = None, verbose = 0, **kwargs):
         verbose = GPF.print_vars(function_name = "GaussianPlume.apply_plume_corrections()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
@@ -547,52 +501,11 @@ class GaussianPlume(CT.ClassTools):
                 if p.plume_id in plume_ids:
                     plumes.append[p]
                     
-        for plume_index, plume in enumerate(plumes):
-            
-        
-        
+        for plume in plumes:
             if plume.wind_direction is not None:
                 self.df.loc[plume.plume_idx,"wind_direction"] = plume.wind_direction
-                
-                
-                
-                
-            # background_length_times	
-            # background_length_before_plume	
-            # background_length_after_plume
-
-            
-    # def plume_background_correction(self, plume, verbose = 0, **kwargs):
-        # """
-        
-        # Notes
-        # -----
-        # Behavior
-        
-        # - 
-        
-        # """
-        
-        # verbose = GPF.print_vars(function_name = "GaussianPlume.plume_background_correction()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
-        
-        # bg_length_before = 0
-        # bg_length_after = 0
-        
-        # if plume.background_length_times is not None:
-            # bg_length_before = plume.n_idx * plume
 
     def parse_data(self, verbose = 0, **kwargs):
-        """
-        
-        
-        Notes
-        -----
-        
-        
-      
-        
-        """
-
         verbose = GPF.print_vars(function_name = "GaussianPlume.parse_data()", function_vars = vars(), verbose = verbose, self_verbose = self.verbose) 
 
         self.generate_sources(verbose = verbose, **kwargs)
@@ -1310,11 +1223,6 @@ class GaussianPlume(CT.ClassTools):
                 conc = self.concentration_measured[idx,:]
             else:
                 conc = self.concentration_measured[idx,channel_idx]
-
-        # nan = numpy.where(numpy.isnan(conc))[0]
-        # if numpy.any(nan):
-            # print("plume {:d}, molecule: {:}, source: {:}, nan: {:}x".format(plume, molecule, source, len(nan)))
-            # print(numpy.shape(conc))
 
 
         if cumulative:

@@ -16,18 +16,10 @@ import time
 class ClassTools(object):
     """
     A way to print the whole class in one go. It prints the key and the value. Adapted from 'Learning Python', 4th edition, by Mark Lutz.
-    
     """
 
     def gatherAttrs(self):
-        """
-        Gathers the attributes of a class, so that they can be printed.
-        
-        Notes
-        -----
-        
-        - 2011-??-??/RB: copied function from book
-        """
+        """Gathers the attributes of a class, so that they can be printed."""
         attrs=[]
         for key in sorted(self.__dict__):
             attrs.append("\t%20s  =  %s\n" % (format_key(key), format_print(getattr(self, key))))
@@ -36,11 +28,6 @@ class ClassTools(object):
     def __str__(self):
         """
         Defines that the class can be printed as a string.
-
-        Notes
-        -----
-        
-        - 2011-??-??/RB: copied function from book
         """
         return "[%s:\n %s]" % (self.__class__.__name__, self.gatherAttrs())
 
@@ -62,13 +49,6 @@ def format_print(var):
     - [1,2]       => [1,2]
     - ndarray     => shape
     - [1,ndarray] => [1, shape]
-    
-    
-    Notes
-    ---------
-    
-    - 2011-??-??/RB: started function  
-    
     """
     # list
     if type(var) == list:
@@ -111,11 +91,6 @@ def format_print(var):
 def format_key(key):
     """
     Strips keys from _. These keys are semi-protected and should be run through the getter and setter methods.
-    
-    Notes
-    -----
-    
-    - 20??-??-??/RB: started function
     """
     if key[0] == "_":
         key = key[1:]
