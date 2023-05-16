@@ -1,0 +1,8 @@
+name: my_environment
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - geopandas
+  - contextily
+  - scipy
