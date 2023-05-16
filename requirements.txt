@@ -1,4 +1,4 @@
-matplotlib
-numpy
-import pandas
-sphinx
+python=3.11.3
+geopandas
+contextily
+scipy
